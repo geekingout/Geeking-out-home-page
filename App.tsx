@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register GSAP ScrollTrigger globally
+gsap.registerPlugin(ScrollTrigger);
 
 // --- Configuration ---
 // Explicitly type as string to avoid TS error when comparing with the placeholder string below
@@ -1593,9 +1598,6 @@ function App() {
      };
 
      useEffect(() => {
-        const gsap = (window as any).gsap;
-        const ScrollTrigger = (window as any).ScrollTrigger;
-        gsap.registerPlugin(ScrollTrigger);
         
         // Custom Cursor
         const cursor = document.getElementById('custom-cursor');
