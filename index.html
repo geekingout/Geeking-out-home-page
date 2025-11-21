@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -17,7 +18,7 @@
     <meta property="og:url" content="https://geekingout.net/">
     <meta property="og:title" content="Geeking Out Agency | AI-Powered. Human-Engineered.">
     <meta property="og:description" content="We build scalable, agentic, and beautiful software that powers businesses. Specializing in Automation, Fine Tuning, and Custom Development.">
-    <meta property="og:image" content="https://geekingout.net/og-image.png">
+    <meta property="og:image" content="https://geekingout.net/og-image.png"> <!-- Ensure you upload an image to this path -->
 
     <!-- Twitter (X) -->
     <meta property="twitter:card" content="summary_large_image">
@@ -29,25 +30,200 @@
     <!-- Favicon: Custom Robot Bot -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235F2EEA'/%3E%3Crect x='16' y='20' width='32' height='28' rx='4' fill='%23F5D324'/%3E%3Ccircle cx='24' cy='30' r='3' fill='%231A1A1A'/%3E%3Ccircle cx='40' cy='30' r='3' fill='%231A1A1A'/%3E%3Crect x='24' y='40' width='16' height='2' rx='1' fill='%231A1A1A'/%3E%3Crect x='30' y='14' width='4' height='6' fill='%23F5D324'/%3E%3Ccircle cx='32' cy='12' r='3' fill='%23F5D324'/%3E%3C/svg%3E">
 
-    <!-- Fonts & Icons -->
+    <!-- JSON-LD Structured Data (The "Language" of AI Models) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "Geeking Out, LLC",
+          "url": "https://geekingout.net",
+          "logo": "https://geekingout.net/logo.png",
+          "sameAs": [
+            "https://x.com/geekingoutnet",
+            "https://www.facebook.com/geekingout",
+            "https://www.instagram.com/geekingoutnet/",
+            "https://www.linkedin.com/company/geeking-out",
+            "https://github.com/geekingout/"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-646-883-4335",
+            "contactType": "customer service",
+            "areaServed": "US",
+            "availableLanguage": "en"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New York",
+            "addressRegion": "NY",
+            "addressCountry": "US"
+          }
+        },
+        {
+          "@type": "Service",
+          "serviceType": "AI Automation & Agents",
+          "provider": { "@type": "Organization", "name": "Geeking Out, LLC" },
+          "description": "Custom AI agents to streamline workflows, sort emails, and automate data gathering."
+        },
+        {
+          "@type": "Service",
+          "serviceType": "Software Development",
+          "provider": { "@type": "Organization", "name": "Geeking Out, LLC" },
+          "description": "Bespoke web apps, mobile apps (iOS/Android), and enterprise platforms."
+        },
+        {
+          "@type": "Service",
+          "serviceType": "RAG Systems",
+          "provider": { "@type": "Organization", "name": "Geeking Out, LLC" },
+          "description": "AI grounded in proprietary knowledge using Retrieval-Augmented Generation."
+        }
+      ]
+    }
+    </script>
+
+    <!-- 1. Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 2. Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 3. Load FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- 4. Load GSAP & ScrollTrigger Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- 5. Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-purple': '#5F2EEA',
+                        'brand-yellow': '#F5D324',
+                        'brand-lime': '#A3F953',
+                        'brand-red': '#FF4B4B',
+                        'brand-off-white': '#F8F8F8',
+                        'brand-black': '#1A1A1A',
+                        'brand-pink': '#FCE7F3',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'infinite-scroll': 'infinite-scroll 40s linear infinite',
+                        'fade-in': 'fade-in 0.3s ease-out forwards',
+                        'scale-in': 'scale-in 0.3s ease-out forwards',
+                        'blink': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        'infinite-scroll': {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        },
+                        'fade-in': {
+                            'from': { opacity: 0 },
+                            'to': { opacity: 1 },
+                        },
+                        'scale-in': {
+                            'from': { transform: 'scale(0.95)', opacity: 0 },
+                            'to': { transform: 'scale(1)', opacity: 1 },
+                        },
+                        'blink': {
+                            'from, to': { borderColor: 'transparent' },
+                            '50%': { borderColor: 'currentColor' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 6. Custom Styles for Animations & Effects -->
+    <style>
+        /* Base styles */
+        body {
+            background-color: #F8F8F8; /* brand-off-white */
+            color: #1A1A1A; /* brand-black */
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        ::selection {
+            background-color: #5F2EEA;
+            color: white;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L7.07 17L9.58 9.58L17 7.07L0 0Z' fill='%23F5D324' stroke='%231A1A1A' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-size: contain;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Dynamic Backgrounds */
+        .bg-grid {
+            background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .bg-wavy {
+            background-color: #5F2EEA;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23F8F8F8' fill-opacity='0.1' d='M0,160L48,181.3C96,203,192,245,288,240C384,235,480,181,576,149.3C672,117,768,107,864,128C960,149,1056,203,1152,208C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+        }
+        .bg-radiant {
+            background-color: #1A1A1A;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Sticker/Card Styles */
+        .sticker-card {
+            background-color: white;
+            border: 3px solid #1A1A1A;
+            box-shadow: 6px 6px 0 #1A1A1A;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .sticker-hover:hover {
+             transform: translate(4px, 4px) rotate(1deg);
+             box-shadow: 2px 2px 0 #1A1A1A;
+        }
+        
+        /* Slanted Headline */
+        .headline-skew {
+            transform: skewY(-3deg);
+        }
+        
+        /* Accordion Styles */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .faq-icon {
+            transition: transform 0.4s ease;
+        }
+    </style>
 <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "three": "https://aistudiocdn.com/three@^0.181.2",
-    "gsap": "https://aistudiocdn.com/gsap@^3.13.0",
-    "gsap/": "https://aistudiocdn.com/gsap@^3.13.0/",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.17",
-    "autoprefixer": "https://aistudiocdn.com/autoprefixer@^10.4.22"
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
@@ -55,6 +231,5 @@
 <body class="bg-brand-off-white text-brand-black">
     <div id="root"></div>
     <div id="custom-cursor" class="custom-cursor"></div>
-    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
