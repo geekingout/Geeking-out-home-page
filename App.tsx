@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
@@ -6,6 +5,17 @@ import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
 // --- Configuration ---
 // Explicitly type as string to avoid TS error when comparing with the placeholder string below
 const GOOGLE_SHEETS_WEBHOOK_URL: string = "https://script.google.com/macros/s/AKfycbwXWaVr52KdOf0bQHL21kG2vFyNZyOrsYYRv5_Bj1wIMxWx5bs7e9UuqIx7nE6G6qEkjw/exec";
+
+// Helper to get API Key safely in Vite/Web environments
+const getApiKey = () => {
+    // @ts-ignore - Vite specific env handling
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+        // @ts-ignore
+        return import.meta.env.VITE_API_KEY;
+    }
+    // Fallback for other build systems
+    return process.env.API_KEY;
+};
 
 const sendToGoogleSheets = async (data: any) => {
     // SANITIZATION FIX: 
@@ -1366,14 +1376,17 @@ const ChatWidget: React.FC<{
     }, [messages]);
 
     useEffect(() => {
-        aiRef.current = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        chatRef.current = aiRef.current.chats.create({
-            model: 'gemini-2.5-flash-lite',
-            config: {
-                systemInstruction: systemInstruction,
-                tools: [{ functionDeclarations: [submitLeadTool] }],
-            }
-        });
+        const apiKey = getApiKey();
+        if (apiKey) {
+            aiRef.current = new GoogleGenAI({ apiKey });
+            chatRef.current = aiRef.current.chats.create({
+                model: 'gemini-2.5-flash-lite',
+                config: {
+                    systemInstruction: systemInstruction,
+                    tools: [{ functionDeclarations: [submitLeadTool] }],
+                }
+            });
+        }
     }, []);
 
     const handleSend = async (text?: string) => {
