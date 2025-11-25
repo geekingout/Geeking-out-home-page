@@ -335,10 +335,15 @@ Our website may link to external sites that are not operated by us. Please be aw
 Your continued use of our website will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us.
 `;
 
-
 // --- Sub-Components ---
 
-const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsMenuOpen: (isOpen: boolean) => void }> = ({ onContactClick, isMenuOpen, setIsMenuOpen }) => {
+const Header: React.FC<{ 
+    onContactClick: () => void; 
+    isMenuOpen: boolean; 
+    setIsMenuOpen: (isOpen: boolean) => void;
+    toggleTheme: () => void;
+    isDark: boolean;
+}> = ({ onContactClick, isMenuOpen, setIsMenuOpen, toggleTheme, isDark }) => {
     const [hoverStyle, setHoverStyle] = useState({ left: 0, width: 0, opacity: 0 });
     const navRef = useRef<HTMLDivElement>(null);
 
@@ -387,16 +392,22 @@ const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsM
 
     return (
     <>
-        <header className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-sm bg-brand-off-white/80 transition-all duration-300">
-            <div className="container mx-auto max-w-7xl flex justify-between items-center">
+        <header className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-sm bg-brand-off-white/80 dark:bg-gray-900/80 transition-all duration-300">
+            {/* UPDATED: justify-center for mobile, justify-between for desktop (md+). Relative positioning for centering logic. */}
+            <div className="container mx-auto max-w-7xl flex justify-center md:justify-between items-center relative">
                 <a href="#" className="flex items-center gap-4 group" aria-label="Geeking Out Agency Home">
                     <div className="relative">
-                        <div className="w-14 h-14 bg-brand-purple rounded-xl flex items-center justify-center border-2 border-brand-black shadow-[4px_4px_0px_#1A1A1A] transition-all duration-200 group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-[2px_2px_0px_#1A1A1A]">
-                            <i className="fas fa-robot text-brand-yellow text-3xl"></i>
+                        {/* Changed bg-white to bg-brand-purple and added invert filter to img to make logo white */}
+                        <div className="w-14 h-14 bg-brand-purple rounded-xl flex items-center justify-center border-2 border-brand-black dark:border-white shadow-[4px_4px_0px_#1A1A1A] dark:shadow-[2px_2px_0px_#FFFFFF] transition-all duration-200 group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-[2px_2px_0px_#1A1A1A] overflow-hidden">
+                            <img 
+                                src="https://spacesbyimpel.org/wp-content/uploads/2025/11/Artboard-1.png" 
+                                alt="Geeking Out Logo" 
+                                className="w-10 h-10 object-contain brightness-0 invert" 
+                            />
                         </div>
                     </div>
                     <div className="flex flex-col justify-center items-center">
-                        <span className="font-black text-3xl leading-none tracking-tight text-brand-black group-hover:text-brand-purple transition-colors">
+                        <span className="font-black text-3xl leading-none tracking-tight text-brand-black dark:text-white group-hover:text-brand-purple transition-colors">
                             Geeking Out
                         </span>
                         <div className="flex items-center mt-1">
@@ -410,7 +421,7 @@ const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsM
                 {/* Desktop Nav */}
                 <nav ref={navRef} onMouseLeave={handleMouseLeave} className="hidden lg:flex items-center gap-2 relative" aria-label="Desktop Navigation">
                     <div 
-                        className="absolute bg-brand-purple/10 backdrop-blur-sm border border-brand-purple/20 rounded-full transition-all duration-300 ease-out -z-10"
+                        className="absolute bg-brand-purple/10 dark:bg-brand-purple/30 backdrop-blur-sm border border-brand-purple/20 rounded-full transition-all duration-300 ease-out -z-10"
                         style={{ ...hoverStyle, height: '36px', top: '50%', transform: 'translateY(-50%)' }}
                     />
                     {navLinks.map(link => (
@@ -419,28 +430,32 @@ const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsM
                             href={link.href}
                             onClick={(e) => handleNavClick(e, link.href)}
                             onMouseEnter={handleMouseEnter}
-                            className="font-semibold text-brand-black/70 hover:text-brand-purple transition-colors px-4 py-1 relative z-10"
+                            className="font-semibold text-brand-black/70 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-yellow transition-colors px-4 py-1 relative z-10"
                         >
                             {link.name}
                         </a>
                     ))}
                 </nav>
 
-                <div className="flex items-center gap-4">
+                {/* Right Controls: Absolute on mobile to prevent layout shift, static on desktop */}
+                <div className="absolute right-0 md:static flex items-center gap-4">
                      <div className="hidden sm:flex items-center gap-4">
+                        <button onClick={toggleTheme} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-purple dark:hover:text-brand-yellow transition-colors" aria-label="Toggle Dark Mode">
+                            <i className={`fas ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
+                        </button>
                         {socialLinks.map((link, index) => (
-                             <a key={index} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-xl text-brand-black/60 hover:text-brand-purple transition-colors">
+                             <a key={index} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-purple dark:hover:text-brand-yellow transition-colors">
                                 <i className={link.icon}></i>
                             </a>
                         ))}
                          <button 
                             onClick={onContactClick}
-                            className="bg-white text-brand-black px-6 py-3 rounded-full font-bold border-2 border-brand-black sticker-card sticker-hover"
+                            className="bg-white dark:bg-gray-800 text-brand-black dark:text-white px-6 py-3 rounded-full font-bold border-2 border-brand-black dark:border-white sticker-card sticker-hover"
                          >
                             Get In Touch
                         </button>
                      </div>
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu" className="lg:hidden md:block hidden text-2xl z-50">
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu" className="lg:hidden md:block hidden text-2xl z-50 text-brand-black dark:text-white">
                         <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
                     </button>
                 </div>
@@ -449,22 +464,25 @@ const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsM
 
         {/* Mobile/Tablet Menu Overlay */}
         {isMenuOpen && (
-            <div className="fixed inset-0 bg-brand-off-white z-40 flex flex-col items-center justify-center animate-fade-in lg:hidden">
+            <div className="fixed inset-0 bg-brand-off-white dark:bg-gray-900 z-40 flex flex-col items-center justify-center animate-fade-in lg:hidden">
                 <nav className="flex flex-col items-center gap-8 text-center" aria-label="Mobile Navigation">
                     {navLinks.map(link => (
                         <a 
                             key={link.name} 
                             href={link.href} 
                             onClick={(e) => handleNavClick(e, link.href)} 
-                            className="font-bold text-3xl text-brand-black hover:text-brand-purple transition-colors"
+                            className="font-bold text-3xl text-brand-black dark:text-white hover:text-brand-purple dark:hover:text-brand-yellow transition-colors"
                         >
                             {link.name}
                         </a>
                     ))}
                 </nav>
                 <div className="flex items-center gap-6 mt-12">
+                     <button onClick={toggleTheme} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-purple dark:hover:text-brand-yellow transition-colors" aria-label="Toggle Dark Mode">
+                            <i className={`fas ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
+                     </button>
                      {socialLinks.map((link, index) => (
-                        <a key={index} href={link.href} onClick={closeMenu} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-3xl text-brand-black/60 hover:text-brand-purple transition-colors">
+                        <a key={index} href={link.href} onClick={closeMenu} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-purple dark:hover:text-brand-yellow transition-colors">
                             <i className={link.icon}></i>
                         </a>
                     ))}
@@ -474,7 +492,7 @@ const Header: React.FC<{ onContactClick: () => void; isMenuOpen: boolean; setIsM
                         onContactClick();
                         closeMenu();
                     }}
-                    className="mt-12 bg-white text-brand-black px-8 py-4 rounded-full font-bold border-2 border-brand-black sticker-card sticker-hover text-lg"
+                    className="mt-12 bg-white dark:bg-gray-800 text-brand-black dark:text-white px-8 py-4 rounded-full font-bold border-2 border-brand-black dark:border-white sticker-card sticker-hover text-lg"
                 >
                     Get In Touch
                 </button>
@@ -495,16 +513,16 @@ const MobileNavBar: React.FC<{ onChatToggle: () => void; onContactClick: () => v
     };
 
     return (
-        <nav className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-[60] md:hidden pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)]" aria-label="Bottom Mobile Navigation">
+        <nav className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-[60] md:hidden pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)]" aria-label="Bottom Mobile Navigation">
             <div className="flex items-center justify-around h-16 px-2 relative">
                  {/* Item 1: Services */}
-                 <button onClick={() => scrollToSection('services')} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 focus:text-brand-purple active:text-brand-purple transition-colors group">
+                 <button onClick={() => scrollToSection('services')} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 dark:text-white/60 focus:text-brand-purple dark:focus:text-brand-yellow active:text-brand-purple dark:active:text-brand-yellow transition-colors group">
                     <i className="fas fa-layer-group text-xl mb-1 group-active:scale-90 transition-transform"></i>
                     <span className="text-[10px] font-bold">Services</span>
                  </button>
 
                  {/* Item 2: Products */}
-                 <button onClick={() => scrollToSection('products')} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 focus:text-brand-purple active:text-brand-purple transition-colors group">
+                 <button onClick={() => scrollToSection('products')} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 dark:text-white/60 focus:text-brand-purple dark:focus:text-brand-yellow active:text-brand-purple dark:active:text-brand-yellow transition-colors group">
                     <i className="fas fa-box-open text-xl mb-1 group-active:scale-90 transition-transform"></i>
                     <span className="text-[10px] font-bold">Products</span>
                  </button>
@@ -513,13 +531,13 @@ const MobileNavBar: React.FC<{ onChatToggle: () => void; onContactClick: () => v
                  <div className="w-full pointer-events-none"></div>
 
                  {/* Item 4: Contact */}
-                 <button onClick={onContactClick} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 focus:text-brand-purple active:text-brand-purple transition-colors group">
+                 <button onClick={onContactClick} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 dark:text-white/60 focus:text-brand-purple dark:focus:text-brand-yellow active:text-brand-purple dark:active:text-brand-yellow transition-colors group">
                     <i className="fas fa-paper-plane text-xl mb-1 group-active:scale-90 transition-transform"></i>
                     <span className="text-[10px] font-bold">Contact</span>
                  </button>
 
                  {/* Item 5: Menu Toggle */}
-                 <button onClick={onMenuToggle} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 focus:text-brand-purple active:text-brand-purple transition-colors group">
+                 <button onClick={onMenuToggle} className="flex flex-col items-center justify-center w-full h-full text-brand-black/60 dark:text-white/60 focus:text-brand-purple dark:focus:text-brand-yellow active:text-brand-purple dark:active:text-brand-yellow transition-colors group">
                     <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl mb-1 group-active:scale-90 transition-transform`}></i>
                     <span className="text-[10px] font-bold">{isMenuOpen ? 'Close' : 'Menu'}</span>
                  </button>
@@ -528,7 +546,7 @@ const MobileNavBar: React.FC<{ onChatToggle: () => void; onContactClick: () => v
                  <button
                     onClick={onChatToggle}
                     aria-label="Open AI Chat Assistant"
-                    className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-14 h-14 bg-brand-purple text-white rounded-full shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)] flex items-center justify-center border-4 border-brand-off-white text-2xl z-10 hover:scale-110 active:scale-95 transition-all duration-200"
+                    className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-14 h-14 bg-brand-purple text-white rounded-full shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)] flex items-center justify-center border-4 border-brand-off-white dark:border-gray-800 text-2xl z-10 hover:scale-110 active:scale-95 transition-all duration-200"
                  >
                     <i className="fas fa-sparkles"></i>
                  </button>
@@ -540,13 +558,29 @@ const MobileNavBar: React.FC<{ onChatToggle: () => void; onContactClick: () => v
 const ThreeGridBackground: React.FC = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const frameIdRef = useRef<number>(0);
+    // Observe theme changes to update THREE js color
+    const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+
+    useEffect(() => {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                     setIsDark(document.documentElement.classList.contains('dark'));
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+        return () => observer.disconnect();
+    }, []);
   
     useEffect(() => {
         if (!mountRef.current) return;
   
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color('#F8F8F8'); 
-        scene.fog = new THREE.Fog('#F8F8F8', 10, 50);
+        // Update bg color based on theme
+        const bgHex = isDark ? '#111827' : '#F8F8F8';
+        scene.background = new THREE.Color(bgHex); 
+        scene.fog = new THREE.Fog(bgHex, 10, 50);
   
         const camera = new THREE.PerspectiveCamera(70, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
         camera.position.set(0, 5, 10);
@@ -613,7 +647,7 @@ const ThreeGridBackground: React.FC = () => {
             geometry.dispose();
             material.dispose();
         };
-    }, []);
+    }, [isDark]);
   
     return <div ref={mountRef} className="absolute inset-0 w-full h-full -z-1 pointer-events-none" aria-hidden="true" />;
 };
@@ -660,13 +694,13 @@ const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }
             </div>
 
             <div className="relative z-20 text-center max-w-4xl mx-auto">
-                <h1 className="font-black text-4xl md:text-6xl lg:text-7xl leading-tight md:leading-none mb-8 md:mb-12">
+                <h1 className="font-black text-4xl md:text-6xl lg:text-7xl leading-tight md:leading-none mb-8 md:mb-12 dark:text-white">
                     <span className="block 2xl:inline" data-hero-word="AI-Powered.">AI-Powered. </span>
-                    <span className="block text-brand-purple 2xl:inline" data-hero-word="Human-Engineered.">Human-Engineered.</span>
+                    <span className="block text-brand-purple dark:text-brand-yellow 2xl:inline" data-hero-word="Human-Engineered.">Human-Engineered.</span>
                 </h1>
                 
                 <div className="mt-8 relative max-w-2xl mx-auto w-full group" data-hero-sub>
-                    <div className="absolute inset-0 bg-brand-black rounded-xl translate-x-2 translate-y-2 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                    <div className="absolute inset-0 bg-brand-black dark:bg-brand-purple rounded-xl translate-x-2 translate-y-2 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
                     <input 
                         type="text"
                         value={inputValue}
@@ -674,16 +708,16 @@ const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }
                         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                         placeholder={placeholderText}
                         aria-label="Ask the AI bot what you want to create"
-                        className="relative w-full bg-white border-2 border-brand-black rounded-xl py-4 px-6 text-lg md:text-xl font-mono shadow-sm focus:outline-none focus:ring-0 placeholder:text-brand-black/40 text-center md:text-left"
+                        className="relative w-full bg-white dark:bg-gray-800 dark:text-white border-2 border-brand-black dark:border-brand-purple rounded-xl py-4 px-6 text-lg md:text-xl font-mono shadow-sm focus:outline-none focus:ring-0 placeholder:text-brand-black/40 dark:placeholder:text-white/40 text-center md:text-left"
                         autoFocus
                     />
-                    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 text-brand-black/30 pointer-events-none">
+                    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 text-brand-black/30 dark:text-white/30 pointer-events-none">
                         <i className="fas fa-level-down-alt rotate-90"></i>
                     </div>
                 </div>
 
                 <div className="mt-10" data-hero-sub>
-                    <button onClick={handleSubmit} className="inline-block bg-brand-purple text-white px-10 py-4 rounded-xl font-bold border-2 border-brand-black text-xl sticker-card sticker-hover shadow-[4px_4px_0px_#1A1A1A]">
+                    <button onClick={handleSubmit} className="inline-block bg-brand-purple text-white px-10 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-xl sticker-card sticker-hover shadow-[4px_4px_0px_#1A1A1A] dark:shadow-[4px_4px_0px_#FFFFFF]">
                         Submit
                     </button>
                 </div>
@@ -696,11 +730,11 @@ const ScrollingTicker: React.FC = () => {
     const items = ['OpenAI', 'Gemini', 'React', 'Python', 'AWS', 'Langchain', 'Next.js', 'Webflow'];
     const repeatedItems = [...items, ...items, ...items];
     return(
-        <div className="py-6 bg-brand-yellow border-y-4 border-brand-black overflow-hidden headline-skew my-12" aria-hidden="true">
+        <div className="py-6 bg-brand-yellow border-y-4 border-brand-black dark:border-white overflow-hidden headline-skew my-12" aria-hidden="true">
             <div className="w-full inline-flex flex-nowrap">
                 <div className="flex items-center justify-center animate-infinite-scroll space-x-12">
                     {repeatedItems.map((item, index) => (
-                        <div key={index} className="flex items-center space-x-4">
+                        <div key={index} className="flex items-center space-x-4 text-brand-black">
                             <span className="text-4xl font-extrabold">{item}</span>
                             <i className="fas fa-bolt text-3xl"></i>
                         </div>
@@ -714,13 +748,13 @@ const ScrollingTicker: React.FC = () => {
 const ServicesSection: React.FC<{ onServiceClick: (service: any) => void }> = ({ onServiceClick }) => (
     <section id="services" className="py-20 px-6">
         <div className="container mx-auto max-w-5xl">
-            <h2 className="text-5xl md:text-7xl font-black text-center mb-4 headline-skew">Our Services</h2>
-            <p className="text-center text-lg max-w-2xl mx-auto mb-16 text-brand-black/70">Your one-stop-shop for everything AI & software. We concept, build, and scale your vision.</p>
+            <h2 className="text-5xl md:text-7xl font-black text-center mb-4 headline-skew dark:text-white">Our Services</h2>
+            <p className="text-center text-lg max-w-2xl mx-auto mb-16 text-brand-black/70 dark:text-gray-300">Your one-stop-shop for everything AI & software. We concept, build, and scale your vision.</p>
             <div className="flex flex-col gap-6">
                 {servicesData.map((service, index) => (
                     <article 
                         key={index} 
-                        className="group sticker-card sticker-hover p-6 rounded-2xl flex items-center gap-6 cursor-pointer"
+                        className="group bg-white dark:bg-gray-800 sticker-card sticker-hover p-6 rounded-2xl flex items-center gap-6 cursor-pointer"
                         onClick={() => onServiceClick(service)}
                         role="button"
                         tabIndex={0}
@@ -731,10 +765,10 @@ const ServicesSection: React.FC<{ onServiceClick: (service: any) => void }> = ({
                            <i className={service.graphic}></i>
                         </div>
                         <div className="flex-grow">
-                            <h3 className="text-3xl font-bold">{service.title}</h3>
-                            <p className="mt-1 text-brand-black/70">{service.description}</p>
+                            <h3 className="text-3xl font-bold dark:text-white">{service.title}</h3>
+                            <p className="mt-1 text-brand-black/70 dark:text-gray-300">{service.description}</p>
                         </div>
-                         <div className="text-3xl text-brand-black/50 group-hover:text-brand-purple transition-transform duration-300 transform group-hover:translate-x-2">
+                         <div className="text-3xl text-brand-black/50 dark:text-white/50 group-hover:text-brand-purple dark:group-hover:text-brand-yellow transition-transform duration-300 transform group-hover:translate-x-2">
                             <i className="fas fa-arrow-right"></i>
                         </div>
                     </article>
@@ -744,80 +778,98 @@ const ServicesSection: React.FC<{ onServiceClick: (service: any) => void }> = ({
     </section>
 );
 
-const ProductsSection: React.FC = () => (
-    <section id="products" className="py-24 px-6 bg-brand-black bg-radiant text-white overflow-hidden">
-        <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-20">
-                <h2 className="text-5xl md:text-7xl font-black headline-skew mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white to-brand-off-white/70">
-                    Our Products
-                </h2>
-                <p className="text-xl text-white/60 max-w-2xl mx-auto">
-                    A showcase of excellence. We build scalable, agentic, and beautiful software that powers businesses.
-                </p>
+const ProductsSection: React.FC = () => {
+    const handleProductClick = (product: any) => {
+        // Find the first available link and open it
+        if (product.links) {
+            const firstLink = Object.values(product.links)[0] as string;
+            if (firstLink) {
+                window.open(firstLink, '_blank', 'noopener,noreferrer');
+            }
+        }
+    };
+
+    return (
+        <section id="products" className="py-24 px-6 bg-brand-black bg-radiant text-white overflow-hidden">
+            <div className="container mx-auto max-w-7xl">
+                <div className="text-center mb-20">
+                    <h2 className="text-5xl md:text-7xl font-black headline-skew mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white to-brand-off-white/70">
+                        Our Products
+                    </h2>
+                    <p className="text-xl text-white/60 max-w-2xl mx-auto">
+                        A showcase of excellence. We build scalable, agentic, and beautiful software that powers businesses.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {productsData.map((product, index) => (
+                        <article 
+                            key={index}
+                            onClick={() => handleProductClick(product)}
+                            className={`group relative bg-neutral-900 border-2 border-white/20 p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2 ${product.border} ${product.glow} flex flex-col cursor-pointer`}
+                        >
+                            {/* Top Icon & Title */}
+                            <div className="flex items-start justify-between mb-6">
+                                <div className={`w-16 h-16 rounded-xl bg-brand-black border border-white/10 flex items-center justify-center text-3xl ${product.accent} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                                    <i className={product.icon}></i>
+                                </div>
+                                <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:bg-white group-hover:text-brand-black">
+                                    <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                                </div>
+                            </div>
+
+                            <h3 className="text-2xl font-black uppercase tracking-wide mb-2">{product.title}</h3>
+                            <h4 className={`text-sm font-mono font-bold uppercase tracking-wider mb-4 ${product.accent} opacity-80`}>{product.subtitle}</h4>
+                            <p className="text-white/60 leading-relaxed mb-6 flex-grow">{product.description}</p>
+                            
+                            {/* Visual cue to click */}
+                            <div className="mb-4 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity text-white/80">
+                                Click to view details <i className="fas fa-external-link-alt ml-1"></i>
+                            </div>
+
+                            {/* Links Footer */}
+                            {product.links && (
+                                <div className="mt-auto pt-6 border-t border-white/10 flex gap-4 relative z-10" onClick={(e) => e.stopPropagation()}>
+                                    {Object.entries(product.links).map(([key, url]) => {
+                                        let iconClass = '';
+                                        let label = '';
+                                        if (key === 'ios') { iconClass = 'fab fa-app-store-ios'; label = 'Download on iOS'; }
+                                        else if (key === 'android') { iconClass = 'fab fa-google-play'; label = 'Download on Android'; }
+                                        else if (key === 'webApp') { iconClass = 'fas fa-laptop'; label = 'Open Web App'; }
+                                        else if (key === 'website') { iconClass = 'fas fa-globe'; label = 'Visit Website'; }
+                                        
+                                        return (
+                                            <a key={key} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${product.title} - ${label}`} className="text-white/40 hover:text-white transition-colors text-xl p-2 hover:bg-white/10 rounded-full" title={label}>
+                                                <i className={iconClass}></i>
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {/* Decorative blurred background blob */}
+                            <div className={`absolute -bottom-4 -right-4 w-32 h-32 bg-current opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 pointer-events-none ${product.accent.replace('text-', 'bg-')}`}></div>
+                        </article>
+                    ))}
+                </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {productsData.map((product, index) => (
-                    <article 
-                        key={index}
-                        className={`group relative bg-neutral-900 border-2 border-white/20 p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2 ${product.border} ${product.glow} flex flex-col`}
-                    >
-                        {/* Top Icon & Title */}
-                        <div className="flex items-start justify-between mb-6">
-                            <div className={`w-16 h-16 rounded-xl bg-brand-black border border-white/10 flex items-center justify-center text-3xl ${product.accent} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                                <i className={product.icon}></i>
-                            </div>
-                            <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:bg-white group-hover:text-brand-black">
-                                <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
-                            </div>
-                        </div>
-
-                        <h3 className="text-2xl font-black uppercase tracking-wide mb-2">{product.title}</h3>
-                        <h4 className={`text-sm font-mono font-bold uppercase tracking-wider mb-4 ${product.accent} opacity-80`}>{product.subtitle}</h4>
-                        <p className="text-white/60 leading-relaxed mb-6 flex-grow">{product.description}</p>
-                        
-                        {/* Links Footer */}
-                        {product.links && (
-                            <div className="mt-auto pt-6 border-t border-white/10 flex gap-4">
-                                {Object.entries(product.links).map(([key, url]) => {
-                                    let iconClass = '';
-                                    let label = '';
-                                    if (key === 'ios') { iconClass = 'fab fa-app-store-ios'; label = 'Download on iOS'; }
-                                    else if (key === 'android') { iconClass = 'fab fa-google-play'; label = 'Download on Android'; }
-                                    else if (key === 'webApp') { iconClass = 'fas fa-laptop'; label = 'Open Web App'; }
-                                    else if (key === 'website') { iconClass = 'fas fa-globe'; label = 'Visit Website'; }
-                                    
-                                    return (
-                                        <a key={key} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${product.title} - ${label}`} className="text-white/40 hover:text-white transition-colors text-xl" title={label}>
-                                            <i className={iconClass}></i>
-                                        </a>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {/* Decorative blurred background blob */}
-                        <div className={`absolute -bottom-4 -right-4 w-32 h-32 bg-current opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 pointer-events-none ${product.accent.replace('text-', 'bg-')}`}></div>
-                    </article>
-                ))}
-            </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 const PhilosophySection: React.FC = () => (
-    <section id="philosophy" className="py-20 px-6 bg-brand-pink bg-grid">
+    <section id="philosophy" className="py-20 px-6 bg-brand-pink bg-grid dark:bg-gray-800">
          <div className="container mx-auto max-w-5xl">
-             <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew">Our Philosophy</h2>
+             <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew text-brand-black dark:text-white">Our Philosophy</h2>
              <div className="relative flex flex-col items-center gap-8">
                 {philosophyData.map((item, index) => (
                      <div key={index} className="flex items-center gap-8 w-full">
-                        <div className="relative z-10 w-24 h-24 rounded-full bg-brand-purple text-white flex-shrink-0 flex items-center justify-center border-4 border-brand-black sticker-card">
+                        <div className="relative z-10 w-24 h-24 rounded-full bg-brand-purple text-white flex-shrink-0 flex items-center justify-center border-4 border-brand-black dark:border-white sticker-card">
                             <i className={`${item.icon} text-3xl`}></i>
                         </div>
-                        <div className="sticker-card sticker-hover p-6 rounded-2xl w-full">
-                             <h3 className="text-3xl font-bold">{item.title}</h3>
-                            <p className="mt-1 text-brand-black/70">{item.description}</p>
+                        <div className="bg-white dark:bg-gray-900 sticker-card sticker-hover p-6 rounded-2xl w-full">
+                             <h3 className="text-3xl font-bold dark:text-white">{item.title}</h3>
+                            <p className="mt-1 text-brand-black/70 dark:text-gray-300">{item.description}</p>
                         </div>
                      </div>
                 ))}
@@ -827,26 +879,26 @@ const PhilosophySection: React.FC = () => (
 );
 
 const TeamSection: React.FC = () => (
-    <section id="team" className="py-24 px-6 bg-white">
+    <section id="team" className="py-24 px-6 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-16">
-                <h2 className="text-5xl md:text-7xl font-black headline-skew mb-4">Leadership Team</h2>
-                <p className="text-lg text-brand-black/60">Friendly faces, expert minds. We're easy to work with.</p>
+                <h2 className="text-5xl md:text-7xl font-black headline-skew mb-4 dark:text-white">Our Team</h2>
+                <p className="text-lg text-brand-black/60 dark:text-gray-400">Friendly faces, expert minds. We're easy to work with.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
                 {teamData.map((member, index) => (
                     <div key={index} className="flex flex-col items-center text-center group">
                         {/* Avatar Container */}
                         <div className="relative mb-6 cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:-rotate-3">
-                            <div className={`w-40 h-40 rounded-full ${member.color} flex items-center justify-center border-4 border-brand-black shadow-[6px_6px_0px_#1A1A1A] group-hover:shadow-[3px_3px_0px_#1A1A1A] transition-all duration-200`}>
+                            <div className={`w-40 h-40 rounded-full ${member.color} flex items-center justify-center border-4 border-brand-black dark:border-white shadow-[6px_6px_0px_#1A1A1A] dark:shadow-[3px_3px_0px_#FFFFFF] group-hover:shadow-[3px_3px_0px_#1A1A1A] dark:group-hover:shadow-[1px_1px_0px_#FFFFFF] transition-all duration-200`}>
                                 <i className={`${member.icon} text-6xl ${member.text}`}></i>
                             </div>
                              {/* Decorative spark */}
                             <div className="absolute -top-2 -right-2 text-3xl text-brand-yellow opacity-0 group-hover:opacity-100 animate-bounce delay-75">✨</div>
                         </div>
                         
-                        <h3 className="text-2xl font-black text-brand-black mb-1">{member.name}</h3>
-                        <p className="text-xs font-bold uppercase tracking-widest text-brand-black/50 mb-3">{member.role}</p>
+                        <h3 className="text-2xl font-black text-brand-black dark:text-white mb-1">{member.name}</h3>
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-black/50 dark:text-gray-500 mb-3">{member.role}</p>
                         
                         {member.linkedin && (
                             <a 
@@ -854,7 +906,7 @@ const TeamSection: React.FC = () => (
                                 target={typeof member.linkedin === 'string' ? "_blank" : ""} 
                                 rel="noopener noreferrer" 
                                 aria-label={`${member.name}'s LinkedIn Profile`}
-                                className="text-brand-purple text-2xl hover:scale-125 transition-transform"
+                                className="text-brand-purple dark:text-brand-yellow text-2xl hover:scale-125 transition-transform"
                             >
                                 <i className="fab fa-linkedin"></i>
                             </a>
@@ -869,18 +921,18 @@ const TeamSection: React.FC = () => (
 const ProcessSection: React.FC = () => (
     <section id="process" className="py-20 px-6">
         <div className="container mx-auto max-w-4xl">
-            <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew">Our Process</h2>
+            <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew dark:text-white">Our Process</h2>
             <div className="flex flex-col gap-12">
                 {processData.map((phaseData, index) => (
                     <div key={index}>
-                        <h3 className="text-3xl font-bold mb-8 text-center md:text-left">{phaseData.phase}</h3>
+                        <h3 className="text-3xl font-bold mb-8 text-center md:text-left dark:text-white">{phaseData.phase}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {phaseData.steps.map((step, stepIndex) => (
-                                <div key={stepIndex} className="flex items-center gap-4 p-4 rounded-full bg-white border-2 border-brand-black sticker-card sticker-hover">
+                                <div key={stepIndex} className="flex items-center gap-4 p-4 rounded-full bg-white dark:bg-gray-800 border-2 border-brand-black dark:border-white sticker-card sticker-hover">
                                     <div className="w-12 h-12 bg-brand-lime rounded-full flex-shrink-0 flex items-center justify-center">
                                         <i className={`${step.icon} text-xl text-brand-black`}></i>
                                     </div>
-                                    <span className="font-semibold text-lg">{step.text}</span>
+                                    <span className="font-semibold text-lg dark:text-white">{step.text}</span>
                                 </div>
                             ))}
                         </div>
@@ -924,7 +976,8 @@ const FaqSection: React.FC = () => {
                  <div className="absolute -top-12 -left-12 w-32 h-32 text-8xl opacity-20">🤔</div>
                  <div className="absolute -bottom-12 -right-12 w-32 h-32 text-8xl opacity-20 rotate-12">💡</div>
                  
-                 <div className="relative sticker-card bg-brand-purple p-8 md:p-12 rounded-2xl">
+                 {/* Removed sticker-card class to fix contrast issues, applying manual styles */}
+                 <div className="relative bg-brand-purple p-8 md:p-12 rounded-2xl border-4 border-brand-black shadow-[6px_6px_0px_#1A1A1A]">
                     <h2 className="text-5xl md:text-7xl font-black text-center mb-8 text-white headline-skew">Any Questions?</h2>
                     {faqData.map((faq, index) => (
                         <FaqItem 
@@ -945,29 +998,29 @@ const TestimonialsSection: React.FC = () => {
     const allTestimonials = [...testimonialsData, ...testimonialsData];
 
     return (
-        <section className="py-24 bg-brand-off-white overflow-hidden">
+        <section className="py-24 bg-brand-off-white dark:bg-gray-900 overflow-hidden">
             <div className="container mx-auto max-w-7xl px-6 mb-12 text-center">
-                <h2 className="text-5xl md:text-7xl font-black headline-skew mb-4">What People Say</h2>
-                <p className="text-lg text-brand-black/60">Don't just take our word for it.</p>
+                <h2 className="text-5xl md:text-7xl font-black headline-skew mb-4 dark:text-white">What People Say</h2>
+                <p className="text-lg text-brand-black/60 dark:text-gray-400">Don't just take our word for it.</p>
             </div>
 
             {/* Single Row - Left to Right */}
             <div className="flex mb-8 overflow-hidden relative">
                 <div className="flex animate-infinite-scroll hover:[animation-play-state:paused] space-x-8 px-8 w-max">
                     {allTestimonials.map((t, i) => (
-                        <div key={i} className="w-[350px] md:w-[450px] flex-shrink-0 bg-white p-6 rounded-2xl border-3 border-brand-black shadow-[6px_6px_0px_#1A1A1A] flex flex-col">
+                        <div key={i} className="w-[350px] md:w-[450px] flex-shrink-0 bg-white dark:bg-gray-800 p-6 rounded-2xl border-3 border-brand-black dark:border-white shadow-[6px_6px_0px_#1A1A1A] dark:shadow-[6px_6px_0px_#FFFFFF] flex flex-col">
                             <div className="flex items-center gap-4 mb-4">
-                                <div className={`w-12 h-12 ${t.color} rounded-full border-2 border-brand-black flex items-center justify-center text-white font-bold text-xl shadow-[2px_2px_0px_#1A1A1A]`}>
+                                <div className={`w-12 h-12 ${t.color} rounded-full border-2 border-brand-black dark:border-white flex items-center justify-center text-white font-bold text-xl shadow-[2px_2px_0px_#1A1A1A] dark:shadow-[2px_2px_0px_#FFFFFF]`}>
                                     {t.name.charAt(0)}
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-sm leading-tight">{t.name}</h4>
-                                    <p className="text-xs text-brand-black/60 leading-tight mt-1 line-clamp-2">{t.role}</p>
+                                    <h4 className="font-bold text-sm leading-tight dark:text-white">{t.name}</h4>
+                                    <p className="text-xs text-brand-black/60 dark:text-gray-400 leading-tight mt-1 line-clamp-2">{t.role}</p>
                                 </div>
                             </div>
                             <div className="relative flex-grow">
-                                <i className="fas fa-quote-left text-brand-purple/20 text-4xl absolute -top-2 -left-2"></i>
-                                <p className="text-sm relative z-10 pt-2 pl-2 italic font-medium text-brand-black/80 leading-relaxed">
+                                <i className="fas fa-quote-left text-brand-purple/20 dark:text-brand-purple/50 text-4xl absolute -top-2 -left-2"></i>
+                                <p className="text-sm relative z-10 pt-2 pl-2 italic font-medium text-brand-black/80 dark:text-gray-300 leading-relaxed">
                                     "{t.text}"
                                 </p>
                             </div>
@@ -982,9 +1035,9 @@ const TestimonialsSection: React.FC = () => {
 const ContactCTA: React.FC<{ onContactClick: () => void }> = ({ onContactClick }) => (
     <section id="contact" className="py-20 px-6 text-center bg-grid">
         <div className="container mx-auto max-w-2xl">
-            <h2 className="text-5xl md:text-7xl font-black headline-skew">Have a Project?</h2>
-            <p className="mt-4 mb-8 text-lg text-brand-black/70">Let's build something amazing together. Reach out and we'll get back to you within 24 hours.</p>
-            <button onClick={onContactClick} className="inline-block bg-brand-purple text-white px-8 py-4 rounded-xl font-bold border-2 border-brand-black text-xl sticker-card sticker-hover">
+            <h2 className="text-5xl md:text-7xl font-black headline-skew dark:text-white">Have a Project?</h2>
+            <p className="mt-4 mb-8 text-lg text-brand-black/70 dark:text-gray-300">Let's build something amazing together. Reach out and we'll get back to you within 24 hours.</p>
+            <button onClick={onContactClick} className="inline-block bg-brand-purple text-white px-8 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-xl sticker-card sticker-hover">
                 Get In Touch
             </button>
         </div>
@@ -1096,10 +1149,10 @@ const Footer: React.FC<{ onOpenTerms: () => void; onOpenPrivacy: () => void; }> 
 
     const contactInfo = [
         { icon: 'fas fa-map-marker-alt', text: 'New York City', href: null },
-        { icon: 'fas fa-globe', text: 'GEEKINGOUT.NET', href: 'https://geekingout.net' },
+        { icon: 'fas fa-globe', text: 'GEEKINGOUT.NET', href: null }, // Removed href as per request
         { icon: 'fas fa-envelope', text: 'geek@geekingout.net', href: 'mailto:geek@geekingout.net' },
         { icon: 'fas fa-phone', text: '646-883-4335 (GEEK)', href: 'tel:+16468834335' },
-        { icon: 'fab fa-whatsapp', text: 'Whatsapp: 646.883.4335', href: 'https://wa.me/16468834335' },
+        { icon: 'fab fa-whatsapp', text: 'Whatsapp: 646.883.4335', href: 'https://wa.me/16468834335', target: '_blank' },
     ];
 
     return (
@@ -1121,7 +1174,7 @@ const Footer: React.FC<{ onOpenTerms: () => void; onOpenPrivacy: () => void; }> 
                                     <i className={`${item.icon} text-2xl text-white/80 group-hover:text-brand-yellow transition-colors`}></i>
                                  </div>
                                  {item.href ? (
-                                     <a href={item.href} className="text-lg font-light tracking-wide hover:text-brand-yellow transition-colors">{item.text}</a>
+                                     <a href={item.href} target={item.target || undefined} rel={item.target ? "noopener noreferrer" : undefined} className="text-lg font-light tracking-wide hover:text-brand-yellow transition-colors">{item.text}</a>
                                  ) : (
                                      <span className="text-lg font-light tracking-wide">{item.text}</span>
                                  )}
@@ -1202,33 +1255,33 @@ const AgentModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-brand-black/60 z-[999] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-            <div className="relative sticker-card bg-white p-8 rounded-2xl w-full max-w-lg animate-scale-in" onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 hover:text-brand-red transition-colors">
+            <div className="relative bg-white dark:bg-gray-800 sticker-card p-8 rounded-2xl w-full max-w-lg animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 dark:text-white/40 hover:text-brand-red transition-colors">
                     <i className="fas fa-times-circle"></i>
                 </button>
                 <div className="text-center mb-6">
                     <div className="text-5xl mb-2 text-brand-purple"><i className="fas fa-magic-wand-sparkles"></i></div>
-                    <h2 className="text-3xl font-bold">Start Your Project</h2>
-                    <p className="text-brand-black/60">Describe your idea, and we'll get in touch.</p>
+                    <h2 className="text-3xl font-bold dark:text-white">Start Your Project</h2>
+                    <p className="text-brand-black/60 dark:text-gray-300">Describe your idea, and we'll get in touch.</p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="name" className="block font-semibold mb-1 text-left">Name</label>
-                        <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="w-full p-3 border-2 border-brand-black rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple" />
+                        <label htmlFor="name" className="block font-semibold mb-1 text-left dark:text-white">Name</label>
+                        <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="w-full p-3 border-2 border-brand-black dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-white dark:bg-gray-700 dark:text-white" />
                     </div>
                     <div>
-                        <label htmlFor="email" className="block font-semibold mb-1 text-left">Email</label>
-                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="w-full p-3 border-2 border-brand-black rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple" />
+                        <label htmlFor="email" className="block font-semibold mb-1 text-left dark:text-white">Email</label>
+                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="w-full p-3 border-2 border-brand-black dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-white dark:bg-gray-700 dark:text-white" />
                     </div>
                      <div>
-                        <label htmlFor="organization" className="block font-semibold mb-1 text-left">Organization</label>
-                        <input type="text" id="organization" name="organization" value={formData.organization} onChange={handleChange} className="w-full p-3 border-2 border-brand-black rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple" />
+                        <label htmlFor="organization" className="block font-semibold mb-1 text-left dark:text-white">Organization</label>
+                        <input type="text" id="organization" name="organization" value={formData.organization} onChange={handleChange} className="w-full p-3 border-2 border-brand-black dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-white dark:bg-gray-700 dark:text-white" />
                     </div>
                     <div>
-                        <label htmlFor="projectDescription" className="block font-semibold mb-1 text-left">Describe your Project</label>
-                        <textarea id="projectDescription" name="projectDescription" placeholder="e.g., I want to build an AI chatbot for my e-commerce site..." value={formData.projectDescription} onChange={handleChange} required rows={4} className="w-full p-3 border-2 border-brand-black rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple resize-y"></textarea>
+                        <label htmlFor="projectDescription" className="block font-semibold mb-1 text-left dark:text-white">Describe your Project</label>
+                        <textarea id="projectDescription" name="projectDescription" placeholder="e.g., I want to build an AI chatbot for my e-commerce site..." value={formData.projectDescription} onChange={handleChange} required rows={4} className="w-full p-3 border-2 border-brand-black dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple resize-y bg-white dark:bg-gray-700 dark:text-white"></textarea>
                     </div>
-                    <button type="submit" className="w-full bg-brand-purple text-white px-8 py-4 rounded-xl font-bold border-2 border-brand-black text-lg sticker-card sticker-hover">
+                    <button type="submit" className="w-full bg-brand-purple text-white px-8 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-lg sticker-card sticker-hover">
                         Launch Project
                     </button>
                 </form>
@@ -1249,8 +1302,8 @@ type Service = {
 const ServiceModal: React.FC<{ service: Service; onClose: () => void; onDiscuss: () => void; }> = ({ service, onClose, onDiscuss }) => {
     return (
         <div className="fixed inset-0 bg-brand-black/60 z-[999] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-            <div className="relative sticker-card bg-white p-8 rounded-2xl w-full max-w-2xl animate-scale-in" onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 hover:text-brand-red transition-colors">
+            <div className="relative bg-white dark:bg-gray-800 sticker-card p-8 rounded-2xl w-full max-w-2xl animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 dark:text-white/40 hover:text-brand-red transition-colors">
                     <i className="fas fa-times-circle"></i>
                 </button>
                 <div className="flex flex-col md:flex-row items-center gap-6 mb-6 text-center md:text-left">
@@ -1258,14 +1311,14 @@ const ServiceModal: React.FC<{ service: Service; onClose: () => void; onDiscuss:
                         <i className={service.graphic}></i>
                     </div>
                     <div>
-                        <h2 className="text-4xl font-bold">{service.title}</h2>
-                        <p className="text-brand-black/60 text-lg">{service.description}</p>
+                        <h2 className="text-4xl font-bold dark:text-white">{service.title}</h2>
+                        <p className="text-brand-black/60 dark:text-gray-300 text-lg">{service.description}</p>
                     </div>
                 </div>
-                <div className="space-y-4 text-brand-black/80 text-lg mb-8">
+                <div className="space-y-4 text-brand-black/80 dark:text-gray-300 text-lg mb-8">
                    <p>{service.explanation}</p>
                 </div>
-                 <button onClick={onDiscuss} className="w-full bg-brand-lime text-brand-black px-8 py-4 rounded-xl font-bold border-2 border-brand-black text-lg sticker-card sticker-hover">
+                 <button onClick={onDiscuss} className="w-full bg-brand-lime text-brand-black px-8 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-lg sticker-card sticker-hover">
                     Discuss This Service
                 </button>
             </div>
@@ -1276,18 +1329,18 @@ const ServiceModal: React.FC<{ service: Service; onClose: () => void; onDiscuss:
 const LegalModal: React.FC<{ title: string; content: string; onClose: () => void }> = ({ title, content, onClose }) => {
     return (
         <div className="fixed inset-0 bg-brand-black/60 z-[999] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-            <div className="relative sticker-card bg-white p-8 rounded-2xl w-full max-w-4xl h-[80vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 hover:text-brand-red transition-colors">
+            <div className="relative bg-white dark:bg-gray-800 sticker-card p-8 rounded-2xl w-full max-w-4xl h-[80vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                <button onClick={onClose} aria-label="Close Modal" className="absolute top-4 right-4 text-3xl text-brand-black/40 dark:text-white/40 hover:text-brand-red transition-colors">
                     <i className="fas fa-times-circle"></i>
                 </button>
                 <div className="mb-6">
-                    <h2 className="text-3xl font-bold border-b-4 border-brand-purple inline-block pb-1">{title}</h2>
+                    <h2 className="text-3xl font-bold border-b-4 border-brand-purple inline-block pb-1 dark:text-white">{title}</h2>
                 </div>
-                <div className="flex-grow overflow-y-auto pr-4 text-brand-black/80 leading-relaxed whitespace-pre-wrap font-light">
+                <div className="flex-grow overflow-y-auto pr-4 text-brand-black/80 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-light">
                     {content}
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200 text-right">
-                    <button onClick={onClose} className="bg-brand-black text-white px-6 py-2 rounded-lg font-bold hover:bg-brand-purple transition-colors">
+                <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-right">
+                    <button onClick={onClose} className="bg-brand-black dark:bg-white text-white dark:text-brand-black px-6 py-2 rounded-lg font-bold hover:bg-brand-purple dark:hover:bg-brand-yellow transition-colors">
                         Close
                     </button>
                 </div>
@@ -1472,16 +1525,16 @@ const ChatWidget: React.FC<{
             <button 
                 onClick={() => onToggle(!isOpen)}
                 aria-label="Toggle Chat Widget"
-                className={`hidden md:flex fixed bottom-6 right-6 w-16 h-16 bg-brand-lime rounded-full border-4 border-brand-black items-center justify-center shadow-[4px_4px_0px_#1A1A1A] z-50 transition-transform hover:scale-110 hover:rotate-3 ${isOpen ? 'rotate-45 bg-brand-red text-white' : 'text-brand-black'}`}
+                className={`hidden md:flex fixed bottom-6 right-6 w-16 h-16 bg-brand-lime rounded-full border-4 border-brand-black dark:border-white items-center justify-center shadow-[4px_4px_0px_#1A1A1A] dark:shadow-[4px_4px_0px_#FFFFFF] z-50 transition-transform hover:scale-110 hover:rotate-3 ${isOpen ? 'rotate-45 bg-brand-red text-white' : 'text-brand-black'}`}
             >
                 <i className={`fas ${isOpen ? 'fa-plus' : 'fa-comment-alt'} text-2xl`}></i>
             </button>
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-24 left-4 right-4 md:left-auto md:bottom-28 md:right-6 md:w-96 h-[60vh] md:h-[500px] bg-white border-4 border-brand-black rounded-2xl shadow-[8px_8px_0px_#1A1A1A] z-50 flex flex-col overflow-hidden animate-scale-in">
+                <div className="fixed bottom-24 left-4 right-4 md:left-auto md:bottom-28 md:right-6 md:w-96 h-[60vh] md:h-[500px] bg-white dark:bg-gray-800 border-4 border-brand-black dark:border-white rounded-2xl shadow-[8px_8px_0px_#1A1A1A] dark:shadow-[4px_4px_0px_#FFFFFF] z-50 flex flex-col overflow-hidden animate-scale-in">
                     {/* Header */}
-                    <div className="bg-brand-purple p-4 border-b-4 border-brand-black flex items-center gap-3 relative">
+                    <div className="bg-brand-purple p-4 border-b-4 border-brand-black dark:border-white flex items-center gap-3 relative">
                         <div className="w-10 h-10 bg-brand-yellow rounded-full border-2 border-brand-black flex items-center justify-center">
                             <i className="fas fa-robot text-brand-black"></i>
                         </div>
@@ -1496,20 +1549,20 @@ const ChatWidget: React.FC<{
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-brand-off-white">
+                    <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-brand-off-white dark:bg-gray-900">
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] p-3 rounded-xl border-2 border-brand-black text-sm font-medium ${msg.role === 'user' ? 'bg-brand-black text-white rounded-br-none' : 'bg-white text-brand-black rounded-bl-none'}`}>
+                                <div className={`max-w-[85%] p-3 rounded-xl border-2 border-brand-black dark:border-white text-sm font-medium ${msg.role === 'user' ? 'bg-brand-black dark:bg-gray-700 text-white rounded-br-none' : 'bg-white dark:bg-gray-800 text-brand-black dark:text-white rounded-bl-none'}`}>
                                     {msg.text}
                                 </div>
                             </div>
                         ))}
                         {isLoading && (
                              <div className="flex justify-start">
-                                <div className="bg-white p-3 rounded-xl border-2 border-brand-black rounded-bl-none flex gap-1">
-                                    <span className="w-2 h-2 bg-brand-black rounded-full animate-bounce"></span>
-                                    <span className="w-2 h-2 bg-brand-black rounded-full animate-bounce delay-100"></span>
-                                    <span className="w-2 h-2 bg-brand-black rounded-full animate-bounce delay-200"></span>
+                                <div className="bg-white dark:bg-gray-800 p-3 rounded-xl border-2 border-brand-black dark:border-white rounded-bl-none flex gap-1">
+                                    <span className="w-2 h-2 bg-brand-black dark:bg-white rounded-full animate-bounce"></span>
+                                    <span className="w-2 h-2 bg-brand-black dark:bg-white rounded-full animate-bounce delay-100"></span>
+                                    <span className="w-2 h-2 bg-brand-black dark:bg-white rounded-full animate-bounce delay-200"></span>
                                 </div>
                             </div>
                         )}
@@ -1525,20 +1578,20 @@ const ChatWidget: React.FC<{
                     </div>
 
                     {/* Input */}
-                    <div className="p-3 bg-white border-t-4 border-brand-black flex gap-2">
+                    <div className="p-3 bg-white dark:bg-gray-800 border-t-4 border-brand-black dark:border-white flex gap-2">
                         <input 
                             type="text" 
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                             placeholder="Type a message..."
-                            className="flex-grow bg-brand-off-white border-2 border-brand-black rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-purple font-medium"
+                            className="flex-grow bg-brand-off-white dark:bg-gray-700 dark:text-white border-2 border-brand-black dark:border-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-purple font-medium"
                         />
                         <button 
                             onClick={() => handleSend()}
                             disabled={isLoading}
                             aria-label="Send Message"
-                            className="bg-brand-purple text-white px-4 rounded-lg border-2 border-brand-black hover:bg-brand-lime hover:text-brand-black transition-colors font-bold disabled:opacity-50"
+                            className="bg-brand-purple text-white px-4 rounded-lg border-2 border-brand-black dark:border-white hover:bg-brand-lime hover:text-brand-black transition-colors font-bold disabled:opacity-50"
                         >
                             <i className="fas fa-paper-plane"></i>
                         </button>
@@ -1556,10 +1609,29 @@ function App() {
      const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
      const [selectedService, setSelectedService] = useState<Service | null>(null);
      const [legalModal, setLegalModal] = useState<'terms' | 'privacy' | null>(null);
+     const [isDark, setIsDark] = useState(false);
      
      // Chat state
      const [isChatOpen, setIsChatOpen] = useState(false);
      const [heroMessage, setHeroMessage] = useState('');
+
+     // Theme toggle handler
+     const toggleTheme = () => {
+         if (document.documentElement.classList.contains('dark')) {
+             document.documentElement.classList.remove('dark');
+             localStorage.theme = 'light';
+             setIsDark(false);
+         } else {
+             document.documentElement.classList.add('dark');
+             localStorage.theme = 'dark';
+             setIsDark(true);
+         }
+     };
+
+     useEffect(() => {
+         // Sync state with DOM on mount
+         setIsDark(document.documentElement.classList.contains('dark'));
+     }, []);
 
      const handleServiceClick = (service: Service) => {
         setSelectedService(service);
@@ -1584,18 +1656,7 @@ function App() {
         const ScrollTrigger = (window as any).ScrollTrigger;
         gsap.registerPlugin(ScrollTrigger);
         
-        // Custom Cursor
-        const cursor = document.getElementById('custom-cursor');
-        if(cursor) {
-            window.addEventListener('mousemove', e => {
-                gsap.to(cursor, {
-                    x: e.clientX,
-                    y: e.clientY,
-                    duration: 0.2,
-                    ease: 'power2.out'
-                });
-            });
-        }
+        // Removed custom cursor logic as requested
         
         // Robust animation context for cleanup
         let ctx = gsap.context(() => {
@@ -1676,6 +1737,8 @@ function App() {
                 onContactClick={() => setIsAgentModalOpen(true)} 
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
+                toggleTheme={toggleTheme}
+                isDark={isDark}
             />
             <main>
                 <HeroSection onSubmit={handleHeroSubmit} />

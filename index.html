@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -27,8 +26,8 @@
     <meta property="twitter:description" content="Your partner for AI Agents, RAG Systems, and Custom App Development in NYC.">
     <meta property="twitter:image" content="https://geekingout.net/og-image.png">
 
-    <!-- Favicon: Custom Robot Bot -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%235F2EEA'/%3E%3Crect x='16' y='20' width='32' height='28' rx='4' fill='%23F5D324'/%3E%3Ccircle cx='24' cy='30' r='3' fill='%231A1A1A'/%3E%3Ccircle cx='40' cy='30' r='3' fill='%231A1A1A'/%3E%3Crect x='24' y='40' width='16' height='2' rx='1' fill='%231A1A1A'/%3E%3Crect x='30' y='14' width='4' height='6' fill='%23F5D324'/%3E%3Ccircle cx='32' cy='12' r='3' fill='%23F5D324'/%3E%3C/svg%3E">
+    <!-- Favicon: Custom Logo -->
+    <link rel="icon" href="https://spacesbyimpel.org/wp-content/uploads/2025/11/Artboard-1.png" type="image/png">
 
     <!-- JSON-LD Structured Data (The "Language" of AI Models) -->
     <script type="application/ld+json">
@@ -101,6 +100,7 @@
     <!-- 5. Custom Tailwind Configuration -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -143,6 +143,15 @@
             }
         }
     </script>
+    
+    <!-- Dark Mode Initializer to prevent flash -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 
     <!-- 6. Custom Styles for Animations & Effects -->
     <style>
@@ -152,25 +161,16 @@
             color: #1A1A1A; /* brand-black */
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
-            cursor: none;
         }
+        
+        .dark body {
+            background-color: #111827; /* gray-900 */
+            color: #F8F8F8;
+        }
+        
         ::selection {
             background-color: #5F2EEA;
             color: white;
-        }
-
-        /* Custom Cursor */
-        .custom-cursor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 32px;
-            height: 32px;
-            background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L7.07 17L9.58 9.58L17 7.07L0 0Z' fill='%23F5D324' stroke='%231A1A1A' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-size: contain;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease-out;
         }
 
         /* Dynamic Backgrounds */
@@ -178,6 +178,10 @@
             background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
             background-size: 40px 40px;
         }
+        .dark .bg-grid {
+             background-image: linear-gradient(to right, #374151 1px, transparent 1px), linear-gradient(to bottom, #374151 1px, transparent 1px);
+        }
+        
         .bg-wavy {
             background-color: #5F2EEA;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23F8F8F8' fill-opacity='0.1' d='M0,160L48,181.3C96,203,192,245,288,240C384,235,480,181,576,149.3C672,117,768,107,864,128C960,149,1056,203,1152,208C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
@@ -190,15 +194,26 @@
         }
 
         /* Sticker/Card Styles */
+        /* IMPORTANT: Removed background-color: white to allow overrides (e.g. bg-brand-purple or dark mode) */
         .sticker-card {
-            background-color: white;
             border: 3px solid #1A1A1A;
             box-shadow: 6px 6px 0 #1A1A1A;
             transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
+        
+        /* Dark mode overrides for sticker card borders and shadows */
+        .dark .sticker-card {
+            border-color: #F3F4F6; /* gray-100 */
+            box-shadow: 6px 6px 0 #F3F4F6;
+        }
+
         .sticker-hover:hover {
              transform: translate(4px, 4px) rotate(1deg);
              box-shadow: 2px 2px 0 #1A1A1A;
+        }
+        
+        .dark .sticker-hover:hover {
+            box-shadow: 2px 2px 0 #F3F4F6;
         }
         
         /* Slanted Headline */
@@ -228,8 +243,7 @@
 }
 </script>
 </head>
-<body class="bg-brand-off-white text-brand-black">
+<body class="bg-brand-off-white text-brand-black dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <div id="root"></div>
-    <div id="custom-cursor" class="custom-cursor"></div>
 </body>
 </html>
