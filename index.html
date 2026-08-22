@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="theme-color" content="#0b0a1f">
+
     <!-- Primary SEO -->
     <title>Geeking Out Agency | AI Automation, Agents & Custom Software. Based in NYC</title>
     <meta name="description" content="NYC-based Digital Agency specializing in AI Agents, Automation, RAG Systems, and Custom Mobile/Web App Development. We build human-engineered, AI-powered software.">
-    <meta name="keywords" content="AI Agency, Automation, AI Agents, RAG Systems, Software Development, Mobile Apps, NYC Tech, React, Gemini, OpenAI, LLM Integration">
+    <meta name="keywords" content="AI Agency, Automation, AI Agents, RAG Systems, Software Development, Mobile Apps, NYC Tech, React, LLM Integration">
     <meta name="author" content="Geeking Out, LLC">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://geekingout.net/">
 
-    <!-- Open Graph / Facebook / LinkedIn (Social Media Optimization) -->
+    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://geekingout.net/">
     <meta property="og:title" content="Geeking Out Agency | AI-Powered. Human-Engineered.">
     <meta property="og:description" content="We build scalable, agentic, and beautiful software that powers businesses. Specializing in Automation, AI Strategy, and Custom Development.">
-    <meta property="og:image" content="https://geekingout.net/og-image.png"> <!-- Ensure you upload an image to this path -->
+    <meta property="og:image" content="https://geekingout.net/og-image.png">
 
     <!-- Twitter (X) -->
     <meta property="twitter:card" content="summary_large_image">
@@ -27,10 +28,10 @@
     <meta property="twitter:image" content="https://geekingout.net/og-image.png">
 
     <!-- Favicon: the original brand mark inlined at 64px, so it ships inside the single-file build
-         and depends on no third-party host. App.tsx holds a 192px copy in LOGO_SRC for the header -->
+         and depends on no third-party host. src/logo.ts holds a 192px copy for the header -->
     <link rel="icon" type="image/png" href="data:image/png;base64,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">
 
-    <!-- JSON-LD Structured Data (The "Language" of AI Models) -->
+    <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -83,168 +84,13 @@
     }
     </script>
 
-    <!-- 1. Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- 2. Load Google Fonts -->
+    <!-- Fonts are the only runtime dependency left: Barlow Condensed for display, Rajdhani for HUD labels,
+         Barlow for body text. Everything else (Tailwind, React, styles) is compiled into this file. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- 3. Load FontAwesome for Icons -->
-    <!-- integrity pins these CDN files to the exact bytes we reviewed: if the CDN ever serves
-         something else, the browser refuses to run it rather than executing it on our page.
-         crossorigin="anonymous" is required for integrity to be enforced cross-origin.
-         Regenerate a hash after any version bump:
-           curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g"
-          crossorigin="anonymous" referrerpolicy="no-referrer">
-
-    <!-- 4. Load GSAP & ScrollTrigger Animation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-            integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
-            integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <!-- 5. Custom Tailwind Configuration -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-purple': '#5F2EEA',
-                        'brand-yellow': '#F5D324',
-                        'brand-lime': '#A3F953',
-                        'brand-red': '#FF4B4B',
-                        'brand-off-white': '#F8F8F8',
-                        'brand-black': '#1A1A1A',
-                        'brand-pink': '#FCE7F3',
-                    },
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
-                    animation: {
-                        'infinite-scroll': 'infinite-scroll 40s linear infinite',
-                        'fade-in': 'fade-in 0.3s ease-out forwards',
-                        'scale-in': 'scale-in 0.3s ease-out forwards',
-                        'blink': 'blink 1s step-end infinite',
-                    },
-                    keyframes: {
-                        'infinite-scroll': {
-                            '0%': { transform: 'translateX(0)' },
-                            '100%': { transform: 'translateX(-50%)' },
-                        },
-                        'fade-in': {
-                            'from': { opacity: 0 },
-                            'to': { opacity: 1 },
-                        },
-                        'scale-in': {
-                            'from': { transform: 'scale(0.95)', opacity: 0 },
-                            'to': { transform: 'scale(1)', opacity: 1 },
-                        },
-                        'blink': {
-                            'from, to': { borderColor: 'transparent' },
-                            '50%': { borderColor: 'currentColor' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Dark Mode Initializer to prevent flash -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    </script>
-
-    <!-- 6. Custom Styles for Animations & Effects -->
-    <style>
-        /* Base styles */
-        body {
-            background-color: #F8F8F8; /* brand-off-white */
-            color: #1A1A1A; /* brand-black */
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
-        }
-        
-        .dark body {
-            background-color: #111827; /* gray-900 */
-            color: #F8F8F8;
-        }
-        
-        ::selection {
-            background-color: #5F2EEA;
-            color: white;
-        }
-
-        /* Dynamic Backgrounds */
-        .bg-grid {
-            background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-        .dark .bg-grid {
-             background-image: linear-gradient(to right, #374151 1px, transparent 1px), linear-gradient(to bottom, #374151 1px, transparent 1px);
-        }
-        
-        .bg-wavy {
-            background-color: #5F2EEA;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23F8F8F8' fill-opacity='0.1' d='M0,160L48,181.3C96,203,192,245,288,240C384,235,480,181,576,149.3C672,117,768,107,864,128C960,149,1056,203,1152,208C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: cover;
-        }
-        .bg-radiant {
-            background-color: #1A1A1A;
-            background-image: radial-gradient(#333 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        /* Sticker/Card Styles */
-        /* IMPORTANT: Removed background-color: white to allow overrides (e.g. bg-brand-purple or dark mode) */
-        .sticker-card {
-            border: 3px solid #1A1A1A;
-            box-shadow: 6px 6px 0 #1A1A1A;
-            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        
-        /* Dark mode overrides for sticker card borders and shadows */
-        .dark .sticker-card {
-            border-color: #F3F4F6; /* gray-100 */
-            box-shadow: 6px 6px 0 #F3F4F6;
-        }
-
-        .sticker-hover:hover {
-             transform: translate(4px, 4px) rotate(1deg);
-             box-shadow: 2px 2px 0 #1A1A1A;
-        }
-        
-        .dark .sticker-hover:hover {
-            box-shadow: 2px 2px 0 #F3F4F6;
-        }
-        
-        /* Slanted Headline */
-        .headline-skew {
-            transform: skewY(-3deg);
-        }
-        
-        /* Accordion Styles */
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .faq-icon {
-            transition: transform 0.4s ease;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-brand-off-white text-brand-black dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
