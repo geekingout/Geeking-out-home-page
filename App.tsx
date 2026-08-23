@@ -635,12 +635,12 @@ const ThreeGridBackground: React.FC = () => {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         mountRef.current.appendChild(renderer.domElement);
   
-        const geometry = new THREE.PlaneGeometry(100, 100, 60, 60);
+        const geometry = new THREE.PlaneGeometry(100, 100, 36, 36);
         const material = new THREE.MeshBasicMaterial({ 
             color: 0x5F2EEA, 
             wireframe: true,
             transparent: true,
-            opacity: 0.2 
+            opacity: 0.12
         });
         
         const plane = new THREE.Mesh(geometry, material);
@@ -658,12 +658,11 @@ const ThreeGridBackground: React.FC = () => {
             for (let i = 0; i < count; i++) {
                 const x = originalPositions[i * 3];
                 const y = originalPositions[i * 3 + 1];
-                const waveHeight = 1.5;
+                const waveHeight = 1.1;
                 const z = Math.sin(x * 0.2 + time * 0.5) * Math.cos(y * 0.2 + time * 0.3) * waveHeight;
                 positionAttribute.setZ(i, z);
             }
             positionAttribute.needsUpdate = true;
-            plane.rotation.z = time * 0.05;
     
             renderer.render(scene, camera);
             frameIdRef.current = requestAnimationFrame(animate);
@@ -698,14 +697,14 @@ const ThreeGridBackground: React.FC = () => {
 
 const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }) => {
     const [inputValue, setInputValue] = useState('');
-    const [placeholderText, setPlaceholderText] = useState('What will you create? The possibilities are endless.');
+    const [placeholderText, setPlaceholderText] = useState('What do you want to build or automate?');
 
     useEffect(() => {
         const updatePlaceholder = () => {
             if (window.innerWidth < 768) {
-                setPlaceholderText('What will you create?');
+                setPlaceholderText('What do you want to build?');
             } else {
-                setPlaceholderText('What will you create? The possibilities are endless.');
+                setPlaceholderText('What do you want to build or automate?');
             }
         };
 
@@ -722,52 +721,48 @@ const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }
     };
 
     return (
-        <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden p-6">
+        <section className="relative w-full flex items-center justify-center overflow-hidden px-6 pt-32 pb-24 md:pt-36 md:pb-32">
             <ThreeGridBackground />
-            {/* Floating AI Agent 1 */}
-            <div data-sticker="true" data-speed="0.5" className="hidden md:flex absolute top-40 left-[10%] w-24 h-24 bg-brand-yellow rounded-full items-center justify-center text-brand-black text-4xl shadow-lg z-10">
-                <i className="fas fa-robot"></i>
-            </div>
-            {/* Floating AI Agent 2 */}
-            <div data-sticker="true" data-speed="-0.3" className="hidden md:flex absolute bottom-24 right-[20%] w-32 h-32 bg-brand-lime rounded-2xl -rotate-12 items-center justify-center text-brand-black text-5xl shadow-lg z-10">
-                <i className="fas fa-brain"></i>
-            </div>
-            {/* Floating AI Agent 3 */}
-            <div data-sticker="true" data-speed="0.2" className="hidden md:flex absolute top-24 right-[15%] w-20 h-20 bg-brand-red rounded-lg rotate-12 items-center justify-center text-white text-3xl shadow-lg z-10">
-                <i className="fas fa-code-branch"></i>
-            </div>
-
             <div className="relative z-20 text-center max-w-4xl mx-auto">
                 {/* Each line stays `block` at every breakpoint so "Human-Engineered." is always on
                     its own row, and nowrap keeps it there in one piece: the entrance animation
                     splits these into per-character inline-block spans, which the browser would
                     otherwise treat as break opportunities and wrap mid-word. */}
-                <h1 className="font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-tight md:leading-none mb-8 md:mb-12 dark:text-white">
+                <h1 className="font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-tight md:leading-none mb-6 dark:text-white">
                     <span className="block whitespace-nowrap" data-hero-word="AI-Powered.">AI-Powered. </span>
                     <span className="block whitespace-nowrap text-brand-purple dark:text-brand-yellow" data-hero-word="Human-Engineered.">Human-Engineered.</span>
                 </h1>
-                
-                <div className="mt-8 relative max-w-2xl mx-auto w-full group" data-hero-sub>
-                    <div className="absolute inset-0 bg-brand-black dark:bg-brand-purple rounded-xl translate-x-2 translate-y-2 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                    <input 
-                        type="text"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                        placeholder={placeholderText}
-                        aria-label="Describe what you want to build"
-                        className="relative w-full bg-white dark:bg-gray-800 dark:text-white border-2 border-brand-black dark:border-brand-purple rounded-xl py-4 px-6 text-lg md:text-xl font-mono shadow-sm focus:outline-none focus:ring-0 placeholder:text-brand-black/40 dark:placeholder:text-white/40 text-center md:text-left"
-                        autoFocus
-                    />
-                    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 text-brand-black/30 dark:text-white/30 pointer-events-none">
-                        <i className="fas fa-level-down-alt rotate-90"></i>
-                    </div>
-                </div>
 
-                <div className="mt-10" data-hero-sub>
-                    <button onClick={handleSubmit} className="inline-block bg-brand-purple text-white px-10 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-xl sticker-card sticker-hover shadow-[4px_4px_0px_#1A1A1A] dark:shadow-[4px_4px_0px_#FFFFFF]">
-                        Submit
-                    </button>
+                {/* The hero previously jumped straight from the headline to an input box, so a first-time
+                    visitor never learned what we actually do. This one sentence is the fix. */}
+                <p className="max-w-2xl mx-auto text-lg md:text-xl text-brand-black/70 dark:text-gray-300 leading-relaxed" data-hero-sub>
+                    We build automations, AI agents, and custom software for businesses in New York and beyond — connected to the tools your team already uses.
+                </p>
+                
+                <div className="mt-10 max-w-2xl mx-auto w-full" data-hero-sub>
+                    <label htmlFor="hero-project" className="block text-sm font-bold uppercase tracking-widest text-brand-black/50 dark:text-gray-400 mb-3">
+                        Start a project
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="relative flex-1 group">
+                            <div className="absolute inset-0 bg-brand-black dark:bg-brand-purple rounded-xl translate-x-1.5 translate-y-1.5 transition-transform group-focus-within:translate-x-2 group-focus-within:translate-y-2"></div>
+                            <input
+                                id="hero-project"
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                                placeholder={placeholderText}
+                                className="relative w-full bg-white dark:bg-gray-800 dark:text-white border-2 border-brand-black dark:border-brand-purple rounded-xl py-4 px-5 text-base md:text-lg focus:outline-none placeholder:text-brand-black/40 dark:placeholder:text-white/40"
+                            />
+                        </div>
+                        <button onClick={handleSubmit} className="shrink-0 bg-brand-purple text-white px-8 py-4 rounded-xl font-bold border-2 border-brand-black dark:border-white text-lg sticker-card sticker-hover shadow-[4px_4px_0px_#1A1A1A] dark:shadow-[4px_4px_0px_#FFFFFF]">
+                            Let's Talk
+                        </button>
+                    </div>
+                    <p className="mt-4 text-sm text-brand-black/50 dark:text-gray-400">
+                        Prefer to browse first? <a href="#services" className="underline underline-offset-4 font-semibold hover:text-brand-purple dark:hover:text-brand-yellow">See what we do</a>.
+                    </p>
                 </div>
             </div>
         </section>
@@ -787,13 +782,13 @@ const ScrollingTicker: React.FC = () => {
     // Four rather than two also keeps the band full at the end of a cycle on very wide displays.
     const repeatedItems = [...items, ...items, ...items, ...items];
     return(
-        <div className="py-6 bg-brand-yellow border-y-4 border-brand-black dark:border-white overflow-hidden headline-skew my-12" aria-hidden="true">
+        <div className="py-3 bg-brand-yellow border-y-2 border-brand-black dark:border-white overflow-hidden -rotate-1 my-16" aria-hidden="true">
             <div className="w-full inline-flex flex-nowrap">
-                <div className="flex items-center justify-center animate-infinite-scroll space-x-12">
+                <div className="flex items-center justify-center animate-infinite-scroll space-x-8">
                     {repeatedItems.map((item, index) => (
-                        <div key={index} className="flex items-center space-x-4 text-brand-black flex-shrink-0">
-                            <span className="text-4xl font-extrabold whitespace-nowrap">{item}</span>
-                            <i className="fas fa-bolt text-3xl"></i>
+                        <div key={index} className="flex items-center space-x-3 text-brand-black flex-shrink-0">
+                            <span className="text-xl md:text-2xl font-extrabold whitespace-nowrap">{item}</span>
+                            <i className="fas fa-bolt text-lg opacity-60"></i>
                         </div>
                     ))}
                 </div>
@@ -803,7 +798,7 @@ const ScrollingTicker: React.FC = () => {
 };
 
 const ServicesSection: React.FC<{ onServiceClick: (service: any) => void }> = ({ onServiceClick }) => (
-    <section id="services" className="py-20 px-6">
+    <section id="services" className="py-24 px-6">
         <div className="container mx-auto max-w-5xl">
             <h2 className="text-5xl md:text-7xl font-black text-center mb-4 headline-skew dark:text-white">Our Services</h2>
             <p className="text-center text-lg max-w-2xl mx-auto mb-16 text-brand-black/70 dark:text-gray-300">Your one-stop-shop for everything AI & software. We concept, build, and scale your vision.</p>
@@ -915,7 +910,7 @@ const ProductsSection: React.FC = () => {
 };
 
 const PhilosophySection: React.FC = () => (
-    <section id="philosophy" className="py-20 px-6 bg-brand-pink bg-grid dark:bg-gray-800">
+    <section id="philosophy" className="py-24 px-6 bg-brand-pink bg-grid dark:bg-gray-800">
          <div className="container mx-auto max-w-5xl">
              <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew text-brand-black dark:text-white">Our Philosophy</h2>
              <div className="relative flex flex-col items-center gap-8">
@@ -976,7 +971,7 @@ const TeamSection: React.FC = () => (
 );
 
 const ProcessSection: React.FC = () => (
-    <section id="process" className="py-20 px-6">
+    <section id="process" className="py-24 px-6">
         <div className="container mx-auto max-w-4xl">
             <h2 className="text-5xl md:text-7xl font-black text-center mb-16 headline-skew dark:text-white">Our Process</h2>
             <div className="flex flex-col gap-12">
@@ -1090,7 +1085,7 @@ const TestimonialsSection: React.FC = () => {
 };
 
 const ContactCTA: React.FC<{ onContactClick: () => void }> = ({ onContactClick }) => (
-    <section id="contact" className="py-20 px-6 text-center bg-grid">
+    <section id="contact" className="py-24 px-6 text-center bg-grid">
         <div className="container mx-auto max-w-2xl">
             <h2 className="text-5xl md:text-7xl font-black headline-skew dark:text-white">Have a Project?</h2>
             <p className="mt-4 mb-8 text-lg text-brand-black/70 dark:text-gray-300">Let's build something amazing together. Reach out and we'll get back to you within 24 hours.</p>
@@ -1489,6 +1484,13 @@ function App() {
         const gsap = (window as any).gsap;
         const ScrollTrigger = (window as any).ScrollTrigger;
         gsap.registerPlugin(ScrollTrigger);
+
+        // Respect the OS "reduce motion" setting. These entrance animations start every section
+        // (and the hero headline) at opacity 0 and fade them in, so skipping them means skipping
+        // the whole setup — the markup is already in its final, visible state.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
         
         // Removed custom cursor logic as requested
         
@@ -1547,10 +1549,9 @@ function App() {
             sections.forEach((section: any) => {
                 gsap.from(section, {
                     opacity: 0,
-                    y: 50,
-                    skewY: 3,
-                    duration: 1,
-                    ease: 'power4.out',
+                    y: 24,
+                    duration: 0.7,
+                    ease: 'power2.out',
                     scrollTrigger: {
                         trigger: section,
                         start: 'top 85%',
