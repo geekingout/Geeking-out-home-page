@@ -23,13 +23,14 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Burnt sienna, pitched at an Upper East Side brownstone: an orange with
-                // enough red-brown in it to read as stone rather than as a highlighter.
-                'brand-orange': '#A9481C',
-                // The lit face of the same stone. Anything that has to glow — gradients,
-                // haloes, the key light in the hero — uses this; the primary is too deep to
-                // carry light on its own.
-                'brand-ember': '#E2803C',
+                // Tailwind's own orange scale, not a hand-mixed hex. Three steps, because
+                // one orange cannot do all three jobs: at 4.5:1 a colour vivid enough to be
+                // the brand cannot also be body text on white, and a colour that can is no
+                // longer vivid. Radix Colors lands on the same solid (its orange-9 is
+                // #f76b15) and splits the same way, which is the cross-check.
+                'brand-orange': '#FF6900',      // orange-500 — the brand: fills, graphics, glow
+                'brand-orange-ink': '#CA3500',  // orange-700 — orange as text on light surfaces
+                'brand-orange-lit': '#FF8904',  // orange-400 — orange as text on dark surfaces
                 'brand-yellow': '#F5D324',
                 'brand-lime': '#A3F953',
                 'brand-red': '#FF4B4B',

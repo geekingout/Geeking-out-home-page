@@ -34,10 +34,8 @@ import React, { useEffect, useRef, useState } from 'react';
 const W = 480;
 const H = 360;
 
-// Two steps up from the site's brownstone orange. A cabinet monitor is a dark room
-// with light drawn on it, and the primary #A9481C is too deep to read as neon.
-const ORANGE = '#C85A22';
-const AMBER = '#E2803C';
+const ORANGE = '#FF6900';
+const AMBER = '#FF8904';
 const LIME = '#A3F953';
 const YELLOW = '#F5D324';
 const RED = '#FF4B4B';
@@ -635,7 +633,7 @@ const Asteroids: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }
                 });
             }
             ctx.strokeStyle = AMBER;
-            ctx.fillStyle = 'rgba(200,90,34,0.22)';
+            ctx.fillStyle = 'rgba(255,105,0,0.22)';
             ctx.lineWidth = 2;
             ctx.shadowColor = ORANGE;
             ctx.shadowBlur = 16;
@@ -1085,7 +1083,7 @@ const PadButton: React.FC<{ keys: KeySet; button: PadKey }> = ({ keys, button })
             onPointerCancel={release}
             onLostPointerCapture={release}
             onContextMenu={e => e.preventDefault()}
-            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-brand-black/70 dark:text-white/70 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-orange dark:active:text-brand-yellow transition-transform"
+            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-brand-black/70 dark:text-white/70 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-orange-ink dark:active:text-brand-orange-lit transition-transform"
         >
             <i className={button.icon} aria-hidden="true"></i>
         </button>

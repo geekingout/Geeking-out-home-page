@@ -163,7 +163,7 @@ const productsData = [
         icon: 'fas fa-music',
         accent: 'text-brand-orange',
         border: 'group-hover:border-brand-orange',
-        glow: 'group-hover:shadow-[0_0_30px_-5px_#A9481C]',
+        glow: 'group-hover:shadow-[0_0_30px_-5px_#FF6900]',
         links: {
             website: 'https://staffy.io'
         }
@@ -187,7 +187,7 @@ const productsData = [
         icon: 'fas fa-users',
         accent: 'text-brand-orange',
         border: 'group-hover:border-brand-orange',
-        glow: 'group-hover:shadow-[0_0_30px_-5px_#A9481C]',
+        glow: 'group-hover:shadow-[0_0_30px_-5px_#FF6900]',
         links: {
             website: 'https://uesdad.nyc/',
             ios: 'https://apps.apple.com/us/app/uesdad/id6759264279'
@@ -208,12 +208,12 @@ const productsData = [
 ];
 
 const teamData = [
-    { name: 'Victor', role: 'Founder / AI Engineer', color: 'bg-brand-orange', text: 'text-white', icon: 'fas fa-user-astronaut', linkedin: 'http://www.linkedin.com/in/geekingout' },
+    { name: 'Victor', role: 'Founder / AI Engineer', color: 'bg-brand-orange', text: 'text-brand-black', icon: 'fas fa-user-astronaut', linkedin: 'http://www.linkedin.com/in/geekingout' },
     { name: 'Usama', role: 'AI Engineer', color: 'bg-brand-lime', text: 'text-brand-black', icon: 'fas fa-laptop-code' },
     { name: 'Nahuel', role: 'Software Developer', color: 'bg-brand-pink', text: 'text-brand-black', icon: 'fas fa-code' },
     { name: 'Miguel', role: 'Systems Engineer', color: 'bg-brand-yellow', text: 'text-brand-black', icon: 'fas fa-server' },
     { name: 'Lucia', role: 'Product Manager', color: 'bg-brand-red', text: 'text-white', icon: 'fas fa-clipboard-check' },
-    { name: 'AQ', role: 'Mobile App Engineer', color: 'bg-brand-orange', text: 'text-white', icon: 'fas fa-mobile-screen' },
+    { name: 'AQ', role: 'Mobile App Engineer', color: 'bg-brand-orange', text: 'text-brand-black', icon: 'fas fa-mobile-screen' },
     { name: 'Patri', role: 'AI/Data Engineer', color: 'bg-brand-lime', text: 'text-brand-black', icon: 'fas fa-database' },
     { name: 'Olivia', role: 'Accounts Manager', color: 'bg-brand-pink', text: 'text-brand-black', icon: 'fas fa-file-invoice-dollar' },
 ];
@@ -584,15 +584,15 @@ const AlertBanner: React.FC = () => {
 
     return (
         <div
-            className="fixed top-0 left-0 w-full h-8 z-[52] overflow-hidden flex items-center bg-gradient-to-r from-brand-orange via-[#C25E24] to-brand-orange"
+            className="fixed top-0 left-0 w-full h-8 z-[52] overflow-hidden flex items-center bg-gradient-to-r from-brand-orange via-[#FF8904] to-brand-orange"
             aria-hidden="true"
         >
             <div className="w-full inline-flex flex-nowrap">
                 <div className="flex items-center animate-infinite-scroll space-x-8">
                     {repeatedItems.map((item, index) => (
-                        <div key={index} className="flex items-center space-x-3 flex-shrink-0 text-white/90">
+                        <div key={index} className="flex items-center space-x-3 flex-shrink-0 text-brand-black/90">
                             <span className="text-[11px] md:text-xs font-bold uppercase tracking-[0.18em] whitespace-nowrap">{item}</span>
-                            <i className="fas fa-bolt text-[10px] text-brand-yellow"></i>
+                            <i className="fas fa-bolt text-[10px] text-brand-black/50"></i>
                         </div>
                     ))}
                 </div>
@@ -657,21 +657,21 @@ const Header: React.FC<{
                     <div className="relative tilt">
                         {/* The mark rides on a lit tile that pushes forward on hover rather than
                             sliding sideways — the same depth language as every other surface. */}
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-orange to-[#E2803C] flex items-center justify-center border border-white/20 shadow-[0_10px_24px_-8px_rgba(169,72,28,.75)] transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-0.5 overflow-hidden">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-orange to-[#FF8904] flex items-center justify-center border border-white/20 shadow-[0_10px_24px_-8px_rgba(255,105,0,.75)] transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-0.5 overflow-hidden">
                             <img
                                 src={LOGO_SRC}
                                 alt="Geeking Out Logo"
-                                className="w-10 h-10 object-contain brightness-0 invert"
+                                className="w-10 h-10 object-contain brightness-0"
                             />
                         </div>
-                        <div className="absolute inset-0 rounded-2xl bg-brand-ember/50 blur-xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
+                        <div className="absolute inset-0 rounded-2xl bg-brand-orange-lit/50 blur-xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
                     </div>
                     <div className="flex flex-col justify-center items-center">
-                        <span className="font-black text-3xl leading-none tracking-tight text-brand-black dark:text-white group-hover:text-brand-orange dark:group-hover:text-brand-yellow transition-colors">
+                        <span className="font-black text-3xl leading-none tracking-tight text-brand-black dark:text-white group-hover:text-brand-orange-ink dark:group-hover:text-brand-orange-lit transition-colors">
                             Geeking Out
                         </span>
                         <div className="flex items-center mt-1">
-                            <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold tracking-wider uppercase text-brand-orange dark:text-brand-yellow bg-brand-orange/10 dark:bg-brand-yellow/10 border border-brand-orange/20 dark:border-brand-yellow/20">
+                            <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold tracking-wider uppercase text-brand-orange-ink dark:text-brand-orange-lit bg-brand-orange/10 dark:bg-brand-orange-lit/10 border border-brand-orange/20 dark:border-brand-orange-lit/20">
                                 &lt;Digital Agency/&gt;
                             </span>
                         </div>
@@ -681,7 +681,7 @@ const Header: React.FC<{
                 {/* Desktop Nav */}
                 <nav ref={navRef} onMouseLeave={handleMouseLeave} className="hidden lg:flex items-center gap-2 relative" aria-label="Desktop Navigation">
                     <div
-                        className="absolute bg-brand-orange/10 dark:bg-brand-ember/25 backdrop-blur-sm border border-brand-orange/20 rounded-full transition-all duration-300 ease-out -z-10"
+                        className="absolute bg-brand-orange/10 dark:bg-brand-orange-lit/25 backdrop-blur-sm border border-brand-orange/20 rounded-full transition-all duration-300 ease-out -z-10"
                         style={{ ...hoverStyle, height: '36px', top: '50%', transform: 'translateY(-50%)' }}
                     />
                     {NAV_PAGES.map(page => {
@@ -695,8 +695,8 @@ const Header: React.FC<{
                                 onMouseEnter={handleMouseEnter}
                                 className={`font-semibold transition-colors px-4 py-1 relative z-10 ${
                                     active
-                                        ? 'text-brand-orange dark:text-brand-yellow'
-                                        : 'text-brand-black/70 dark:text-gray-300 hover:text-brand-orange dark:hover:text-brand-yellow'
+                                        ? 'text-brand-orange-ink dark:text-brand-orange-lit'
+                                        : 'text-brand-black/70 dark:text-gray-300 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'
                                 }`}
                             >
                                 {page.nav}
@@ -708,18 +708,18 @@ const Header: React.FC<{
                 {/* Right Controls: Absolute on mobile to prevent layout shift, static on desktop */}
                 <div className="absolute right-0 md:static flex items-center gap-4">
                      <div className="hidden sm:flex items-center gap-4">
-                        <button onClick={toggleTheme} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange dark:hover:text-brand-yellow transition-colors" aria-label="Toggle Dark Mode">
+                        <button onClick={toggleTheme} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit transition-colors" aria-label="Toggle Dark Mode">
                             <i className={`fas ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
                         </button>
                         {socialLinks.map((link, index) => (
-                             <a key={index} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange dark:hover:text-brand-yellow transition-colors">
+                             <a key={index} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit transition-colors">
                                 <i className={link.icon}></i>
                             </a>
                         ))}
                          <RouteLink
                             to="/contact"
                             onClick={closeMenu}
-                            className="relative px-6 py-3 rounded-full font-bold text-white bg-brand-orange shadow-[0_10px_30px_-12px_rgba(169,72,28,.9)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_-14px_rgba(169,72,28,1)]"
+                            className="relative px-6 py-3 rounded-full font-bold text-brand-black bg-brand-orange shadow-[0_10px_30px_-12px_rgba(255,105,0,.9)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_-14px_rgba(255,105,0,1)]"
                          >
                             Get In Touch
                         </RouteLink>
@@ -739,7 +739,7 @@ const Header: React.FC<{
                         to="/"
                         onClick={closeMenu}
                         aria-current={route === '/' ? 'page' : undefined}
-                        className={`font-bold text-3xl transition-colors ${route === '/' ? 'text-brand-orange dark:text-brand-yellow' : 'text-brand-black dark:text-white hover:text-brand-orange dark:hover:text-brand-yellow'}`}
+                        className={`font-bold text-3xl transition-colors ${route === '/' ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
                     >
                         Home
                     </RouteLink>
@@ -749,18 +749,18 @@ const Header: React.FC<{
                             to={page.path}
                             onClick={closeMenu}
                             aria-current={page.path === route ? 'page' : undefined}
-                            className={`font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange dark:text-brand-yellow' : 'text-brand-black dark:text-white hover:text-brand-orange dark:hover:text-brand-yellow'}`}
+                            className={`font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
                         >
                             {page.nav}
                         </RouteLink>
                     ))}
                 </nav>
                 <div className="flex items-center gap-6 mt-12">
-                     <button onClick={toggleTheme} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange dark:hover:text-brand-yellow transition-colors" aria-label="Toggle Dark Mode">
+                     <button onClick={toggleTheme} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit transition-colors" aria-label="Toggle Dark Mode">
                             <i className={`fas ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
                      </button>
                      {socialLinks.map((link, index) => (
-                        <a key={index} href={link.href} onClick={closeMenu} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange dark:hover:text-brand-yellow transition-colors">
+                        <a key={index} href={link.href} onClick={closeMenu} target="_blank" rel="noopener noreferrer" aria-label={link.label} className="text-3xl text-brand-black/60 dark:text-white/60 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit transition-colors">
                             <i className={link.icon}></i>
                         </a>
                     ))}
@@ -768,7 +768,7 @@ const Header: React.FC<{
                 <RouteLink
                     to="/contact"
                     onClick={closeMenu}
-                    className="mt-12 px-8 py-4 rounded-full font-bold text-white text-lg bg-brand-orange shadow-[0_16px_40px_-14px_rgba(169,72,28,.95)]"
+                    className="mt-12 px-8 py-4 rounded-full font-bold text-brand-black text-lg bg-brand-orange shadow-[0_16px_40px_-14px_rgba(255,105,0,.95)]"
                 >
                     Get In Touch
                 </RouteLink>
@@ -781,7 +781,7 @@ const Header: React.FC<{
 const MobileNavBar: React.FC<{ route: string; isMenuOpen: boolean; onMenuToggle: () => void; }> = ({ route, isMenuOpen, onMenuToggle }) => {
     const tab = (active: boolean) =>
         `flex flex-col items-center justify-center w-full h-full transition-colors group ${
-            active ? 'text-brand-orange dark:text-brand-yellow' : 'text-brand-black/60 dark:text-white/60'
+            active ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black/60 dark:text-white/60'
         }`;
 
     return (
@@ -814,7 +814,7 @@ const MobileNavBar: React.FC<{ route: string; isMenuOpen: boolean; onMenuToggle:
                  <RouteLink
                     to="/contact"
                     aria-label="Start a project"
-                    className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-14 h-14 bg-brand-orange text-white rounded-full shadow-[0_10px_26px_-6px_rgba(169,72,28,.9)] flex items-center justify-center border-4 border-[var(--bg-1)] text-2xl z-10 hover:scale-110 active:scale-95 transition-all duration-200"
+                    className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-14 h-14 bg-brand-orange text-brand-black rounded-full shadow-[0_10px_26px_-6px_rgba(255,105,0,.9)] flex items-center justify-center border-4 border-[var(--bg-1)] text-2xl z-10 hover:scale-110 active:scale-95 transition-all duration-200"
                  >
                     <i className="fas fa-rocket"></i>
                  </RouteLink>
@@ -1107,7 +1107,10 @@ const HeroCore: React.FC = () => {
         if (!mount) return;
 
         const calm = reducedMotion();
-        const STONE = 0xA9481C, EMBER = 0xE2803C, LIME = 0xA3F953, YELLOW = 0xF5D324;
+        // The scene lights and tints itself off the same two steps the DOM uses: the
+        // solid where a shape has to be seen against the light page, the lit step
+        // wherever the colour is emitting rather than filling.
+        const ORANGE = 0xFF6900, ORANGE_LIT = 0xFF8904, LIME = 0xA3F953, YELLOW = 0xF5D324;
 
         let renderer: THREE.WebGLRenderer;
         try {
@@ -1176,7 +1179,7 @@ const HeroCore: React.FC = () => {
         // camera it would otherwise collapse into a line straight through her chest.
         const RING_SPECS = [
             { r: 2.35, y: -2.85, c: YELLOW, tilt: 0.04 },
-            { r: 1.98, y: -2.1, c: EMBER, tilt: 0.07 },
+            { r: 1.98, y: -2.1, c: ORANGE_LIT, tilt: 0.07 },
             { r: 1.5, y: -0.35, c: LIME, tilt: 0.36 },
         ];
         RING_SPECS.forEach(spec => {
@@ -1205,7 +1208,7 @@ const HeroCore: React.FC = () => {
         dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
         const dustMat = new THREE.PointsMaterial({
             size: 0.038,
-            color: isDark ? 0xffffff : STONE,
+            color: isDark ? 0xffffff : ORANGE,
             transparent: true,
             opacity: isDark ? 0.55 : 0.4,
             sizeAttenuation: true,
@@ -1217,7 +1220,7 @@ const HeroCore: React.FC = () => {
         // Directional rather than point lights: the highlights then stay put no matter how
         // far the camera dollies on scroll.
         const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.35 : 0.8);
-        const key = new THREE.DirectionalLight(EMBER, 6.5); key.position.set(-4, 3, 5);
+        const key = new THREE.DirectionalLight(ORANGE_LIT, 6.5); key.position.set(-4, 3, 5);
         const rim = new THREE.DirectionalLight(LIME, 3.4); rim.position.set(5, -2.5, 2);
         const back = new THREE.DirectionalLight(YELLOW, 2.6); back.position.set(1.5, 4, -5);
         scene.add(ambient, key, rim, back);
@@ -1382,7 +1385,7 @@ const HeroCore: React.FC = () => {
             {/* Bloom behind the canvas: the glow has to live in the DOM because the scene
                 deliberately runs without post-processing. */}
             <div
-                className="absolute inset-[12%] rounded-full bg-brand-orange/25 dark:bg-brand-ember/35 blur-[70px] animate-orbit-pulse pointer-events-none"
+                className="absolute inset-[12%] rounded-full bg-brand-orange/25 dark:bg-brand-orange-lit/35 blur-[70px] animate-orbit-pulse pointer-events-none"
                 aria-hidden="true"
             />
             <div
@@ -1452,7 +1455,7 @@ const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }
                         below lg, then fixed to the text column once the model sits beside it. */}
                     <h1 className="display font-black text-[min(2.6rem,8.2vw)] sm:text-[min(3.7rem,8.2vw)] lg:text-[3.05rem] xl:text-[3.9rem] mb-6 dark:text-white">
                         <span className="block whitespace-nowrap" data-hero-word="AI-Powered.">AI-Powered. </span>
-                        <span className="block whitespace-nowrap text-brand-orange dark:text-brand-yellow" data-hero-word="Human-Engineered.">Human-Engineered.</span>
+                        <span className="block whitespace-nowrap text-brand-orange-ink dark:text-brand-orange-lit" data-hero-word="Human-Engineered.">Human-Engineered.</span>
                     </h1>
 
                     {/* The hero previously jumped straight from the headline to an input box, so a first-time
@@ -1479,13 +1482,13 @@ const HeroSection: React.FC<{ onSubmit: (msg: string) => void }> = ({ onSubmit }
                             </div>
                             <button
                                 onClick={handleSubmit}
-                                className="shrink-0 px-8 py-4 rounded-2xl font-bold text-lg text-white bg-brand-orange shadow-[0_16px_40px_-16px_rgba(169,72,28,1)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-18px_rgba(169,72,28,1)] active:translate-y-0"
+                                className="shrink-0 px-8 py-4 rounded-2xl font-bold text-lg text-brand-black bg-brand-orange shadow-[0_16px_40px_-16px_rgba(255,105,0,1)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-18px_rgba(255,105,0,1)] active:translate-y-0"
                             >
                                 Let's Talk
                             </button>
                         </div>
                         <p className="mt-4 text-sm text-brand-black/50 dark:text-gray-400">
-                            Prefer to browse first? <RouteLink to="/services" className="underline underline-offset-4 font-semibold hover:text-brand-orange dark:hover:text-brand-yellow">See what we do</RouteLink>.
+                            Prefer to browse first? <RouteLink to="/services" className="underline underline-offset-4 font-semibold hover:text-brand-orange-ink dark:hover:text-brand-orange-lit">See what we do</RouteLink>.
                         </p>
                     </div>
                 </div>
@@ -1543,7 +1546,7 @@ const ServiceRow: React.FC<{ service: any; index: number; onClick: () => void }>
                     <p className="mt-1 text-brand-black/60 dark:text-gray-400">{service.description}</p>
                 </div>
             </div>
-            <div className="pop-1 text-2xl text-brand-black/35 dark:text-white/35 group-hover:text-brand-orange dark:group-hover:text-brand-yellow transition-all duration-300 group-hover:translate-x-1">
+            <div className="pop-1 text-2xl text-brand-black/35 dark:text-white/35 group-hover:text-brand-orange-ink dark:group-hover:text-brand-orange-lit transition-all duration-300 group-hover:translate-x-1">
                 <i className="fas fa-arrow-right"></i>
             </div>
         </article>
@@ -1567,7 +1570,7 @@ const ServiceRow: React.FC<{ service: any; index: number; onClick: () => void }>
 // The data carries Tailwind classes; the colour fields and the chrome need the raw value,
 // so keep one lookup rather than scattering hexes through the markup.
 const ACCENT_HEX: Record<string, string> = {
-    'text-brand-orange': '#A9481C',
+    'text-brand-orange': '#FF6900',
     'text-brand-lime': '#A3F953',
     'text-brand-yellow': '#F5D324',
     'text-brand-red': '#FF4B4B',
@@ -1601,7 +1604,7 @@ const ProductShowcase: React.FC<{ level?: 1 | 2 }> = ({ level = 1 }) => {
     const drag = useRef({ x: 0, y: 0, down: false, moved: false });
 
     const product = productsData[active];
-    const accent = ACCENT_HEX[product.accent] ?? '#A9481C';
+    const accent = ACCENT_HEX[product.accent] ?? '#FF6900';
 
     const go = (dir: number) => { setManual(true); setActive(a => (a + dir + count) % count); };
     const jump = (index: number) => { setManual(true); setActive(index); };
@@ -1660,8 +1663,8 @@ const ProductShowcase: React.FC<{ level?: 1 | 2 }> = ({ level = 1 }) => {
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     background:
-                        'radial-gradient(65vw 55vh at 50% 24%, #E2803C2e, transparent 64%),' +
-                        'radial-gradient(50vw 45vh at 8% 96%, #E2803C1a, transparent 62%)',
+                        'radial-gradient(65vw 55vh at 50% 24%, #FF89042e, transparent 64%),' +
+                        'radial-gradient(50vw 45vh at 8% 96%, #FF89041a, transparent 62%)',
                 }}
             />
 
@@ -1669,7 +1672,7 @@ const ProductShowcase: React.FC<{ level?: 1 | 2 }> = ({ level = 1 }) => {
                 cross-faded. Gradients cannot be interpolated, so the transition has to be
                 opacity between stacked layers. */}
             {productsData.map((item, index) => {
-                const hex = ACCENT_HEX[item.accent] ?? '#A9481C';
+                const hex = ACCENT_HEX[item.accent] ?? '#FF6900';
                 return (
                     <div
                         key={item.title}
@@ -1720,7 +1723,7 @@ const ProductShowcase: React.FC<{ level?: 1 | 2 }> = ({ level = 1 }) => {
                             const depth = Math.abs(offset);
                             const isActive = depth === 0;
                             const buried = depth > 2;
-                            const hex = ACCENT_HEX[item.accent] ?? '#A9481C';
+                            const hex = ACCENT_HEX[item.accent] ?? '#FF6900';
                             const entries = Object.entries(item.links ?? {});
                             // Prefer the product's own domain over a store listing: NOTIFY's first
                             // link is the App Store, and "apps.apple.com" says nothing about NOTIFY.
@@ -1933,17 +1936,17 @@ const EngineeringSection: React.FC = () => {
                         <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
                             <RouteLink
                                 to="/contact"
-                                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-white bg-brand-orange shadow-[0_14px_36px_-16px_rgba(169,72,28,1)] hover:-translate-y-0.5 transition-transform"
+                                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-brand-black bg-brand-orange shadow-[0_14px_36px_-16px_rgba(255,105,0,1)] hover:-translate-y-0.5 transition-transform"
                             >
                                 Start a conversation
                                 <i className="fas fa-arrow-right text-sm"></i>
                             </RouteLink>
                             <span className="flex items-center gap-3 font-semibold text-brand-black/70 dark:text-gray-300">
-                                <RouteLink to="/products" className="underline underline-offset-4 decoration-brand-black/20 dark:decoration-white/25 hover:text-brand-orange dark:hover:text-brand-yellow hover:decoration-current transition-colors">
+                                <RouteLink to="/products" className="underline underline-offset-4 decoration-brand-black/20 dark:decoration-white/25 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit hover:decoration-current transition-colors">
                                     See what we’ve built
                                 </RouteLink>
                                 <span className="opacity-35" aria-hidden="true">·</span>
-                                <RouteLink to="/process" className="underline underline-offset-4 decoration-brand-black/20 dark:decoration-white/25 hover:text-brand-orange dark:hover:text-brand-yellow hover:decoration-current transition-colors">
+                                <RouteLink to="/process" className="underline underline-offset-4 decoration-brand-black/20 dark:decoration-white/25 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit hover:decoration-current transition-colors">
                                     How we work
                                 </RouteLink>
                             </span>
@@ -1957,7 +1960,7 @@ const EngineeringSection: React.FC = () => {
                             <div className="grid grid-cols-2 gap-px bg-[var(--hair)]">
                                 {stats.map(stat => (
                                     <div key={stat.label} className="bg-[var(--panel-solid)] p-5 md:p-6">
-                                        <div className="display font-black text-3xl md:text-4xl text-brand-orange dark:text-brand-yellow leading-none mb-2.5">
+                                        <div className="display font-black text-3xl md:text-4xl text-brand-orange-ink dark:text-brand-orange-lit leading-none mb-2.5">
                                             {stat.value}
                                             {stat.unit && (
                                                 <span className="text-lg md:text-xl ml-1.5 tracking-normal">{stat.unit}</span>
@@ -2005,8 +2008,8 @@ const PhilosophyCard: React.FC<{ item: any }> = ({ item }) => {
                 {item.number}
             </span>
             <div className="relative mb-6 w-16 h-16" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="absolute inset-0 rounded-2xl bg-brand-ember blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" aria-hidden="true" />
-                <div className="pop-2 relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-orange to-[#E2803C] text-white flex items-center justify-center shadow-[0_14px_30px_-12px_rgba(169,72,28,.95)]">
+                <div className="absolute inset-0 rounded-2xl bg-brand-orange-lit blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" aria-hidden="true" />
+                <div className="pop-2 relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-orange to-[#FF8904] text-brand-black flex items-center justify-center shadow-[0_14px_30px_-12px_rgba(255,105,0,.95)]">
                     <i className={`${item.icon} text-2xl`}></i>
                 </div>
             </div>
@@ -2056,7 +2059,7 @@ const TeamCard: React.FC<{ member: any }> = ({ member }) => {
                         target={typeof member.linkedin === 'string' ? "_blank" : ""}
                         rel="noopener noreferrer"
                         aria-label={`${member.name}'s LinkedIn Profile`}
-                        className="inline-block text-brand-orange dark:text-brand-yellow text-2xl hover:scale-125 transition-transform"
+                        className="inline-block text-brand-orange-ink dark:text-brand-orange-lit text-2xl hover:scale-125 transition-transform"
                     >
                         <i className="fab fa-linkedin"></i>
                     </a>
@@ -2085,7 +2088,7 @@ const ProcessSection: React.FC = () => (
                         <div key={index}>
                             <div className="relative mb-8" data-depth-in>
                                 <span
-                                    className="absolute -left-[26px] md:-left-[38px] top-2 w-4 h-4 rounded-full bg-brand-orange shadow-[0_0_0_5px_var(--bg-0),0_0_22px_4px_rgba(169,72,28,.6)]"
+                                    className="absolute -left-[26px] md:-left-[38px] top-2 w-4 h-4 rounded-full bg-brand-orange shadow-[0_0_0_5px_var(--bg-0),0_0_22px_4px_rgba(255,105,0,.6)]"
                                     aria-hidden="true"
                                 />
                                 <div className="chip mb-2">Phase {index === 0 ? 'A' : 'B'}</div>
@@ -2145,7 +2148,7 @@ const FaqSection: React.FC = () => {
             <div
                 className="absolute inset-0"
                 aria-hidden="true"
-                style={{ background: 'radial-gradient(60vw 50vh at 50% -10%, rgba(226,128,60,.4), transparent 65%)' }}
+                style={{ background: 'radial-gradient(60vw 50vh at 50% -10%, rgba(255,137,4,.4), transparent 65%)' }}
             />
             <div className="container mx-auto max-w-4xl relative z-10">
                 <SectionHead label="Before you ask" title="Any Questions?" light />
@@ -2217,7 +2220,7 @@ const TestimonialsSection: React.FC = () => {
                                 </div>
                             </div>
                             <div className="relative flex-grow">
-                                <i className="fas fa-quote-left text-brand-orange/20 dark:text-brand-ember/50 text-3xl absolute -top-1 -left-1" aria-hidden="true"></i>
+                                <i className="fas fa-quote-left text-brand-orange/20 dark:text-brand-orange-lit/50 text-3xl absolute -top-1 -left-1" aria-hidden="true"></i>
                                 <p className="text-sm relative z-10 pt-2 pl-2 italic font-medium text-brand-black/75 dark:text-gray-300 leading-relaxed">
                                     "{t.text}"
                                 </p>
@@ -2236,7 +2239,7 @@ const ContactCTA: React.FC = () => (
             {/* A light source behind the copy rather than a panel around it — the section
                 reads as an opening in the page instead of another card. */}
             <div
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] max-w-[120vw] rounded-full bg-brand-orange/25 dark:bg-brand-ember/35 blur-[90px] animate-orbit-pulse pointer-events-none"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] max-w-[120vw] rounded-full bg-brand-orange/25 dark:bg-brand-orange-lit/35 blur-[90px] animate-orbit-pulse pointer-events-none"
                 aria-hidden="true"
             />
             <div className="relative">
@@ -2249,7 +2252,7 @@ const ContactCTA: React.FC = () => (
                 </p>
                 <RouteLink
                     to="/contact"
-                    className="inline-flex items-center gap-3 px-9 py-5 rounded-2xl font-bold text-lg md:text-xl text-white bg-brand-orange shadow-[0_20px_50px_-18px_rgba(169,72,28,1)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_32px_66px_-20px_rgba(169,72,28,1)] active:translate-y-0"
+                    className="inline-flex items-center gap-3 px-9 py-5 rounded-2xl font-bold text-lg md:text-xl text-brand-black bg-brand-orange shadow-[0_20px_50px_-18px_rgba(255,105,0,1)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_32px_66px_-20px_rgba(255,105,0,1)] active:translate-y-0"
                 >
                     Let’s talk about your project
                     <i className="fas fa-arrow-right text-base"></i>
@@ -2587,7 +2590,7 @@ const Footer: React.FC = () => {
             <div
                 className="absolute inset-0 z-0 pointer-events-none"
                 aria-hidden="true"
-                style={{ background: 'radial-gradient(60vw 40vh at 50% 0%, rgba(226,128,60,.28), transparent 60%)' }}
+                style={{ background: 'radial-gradient(60vw 40vh at 50% 0%, rgba(255,137,4,.28), transparent 60%)' }}
             />
             <NYCSkyline />
 
@@ -2597,8 +2600,8 @@ const Footer: React.FC = () => {
                     {/* Brand */}
                     <div>
                         <div className="flex items-center gap-4 mb-5">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-orange to-[#E2803C] flex items-center justify-center border border-white/20 shadow-[0_10px_24px_-8px_rgba(169,72,28,.8)] overflow-hidden flex-shrink-0">
-                                <img src={LOGO_SRC} alt="" className="w-8 h-8 object-contain brightness-0 invert" />
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-orange to-[#FF8904] flex items-center justify-center border border-white/20 shadow-[0_10px_24px_-8px_rgba(255,105,0,.8)] overflow-hidden flex-shrink-0">
+                                <img src={LOGO_SRC} alt="" className="w-8 h-8 object-contain brightness-0" />
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black tracking-tighter leading-none">Geeking Out</h3>
@@ -2788,7 +2791,7 @@ const ProjectForm: React.FC<{ initialDescription?: string }> = ({ initialDescrip
             <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="w-full px-8 py-4 rounded-xl font-bold text-lg text-white bg-brand-orange shadow-[0_16px_40px_-16px_rgba(169,72,28,1)] hover:-translate-y-0.5 transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="w-full px-8 py-4 rounded-xl font-bold text-lg text-brand-black bg-brand-orange shadow-[0_16px_40px_-16px_rgba(255,105,0,1)] hover:-translate-y-0.5 transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
             >
                 {status === 'sending' ? 'Sending…' : 'Launch Project'}
             </button>
@@ -2880,11 +2883,11 @@ type Chapter = {
 };
 
 const CHAPTERS: Chapter[] = [
-    { key: 'services', chip: 'What we do', title: 'Our Services', icon: 'fas fa-layer-group', color: 'bg-brand-orange', text: 'text-white' },
+    { key: 'services', chip: 'What we do', title: 'Our Services', icon: 'fas fa-layer-group', color: 'bg-brand-orange', text: 'text-brand-black' },
     { key: 'products', chip: 'Shipped work', title: 'Our Products', icon: 'fas fa-box-open', color: 'bg-brand-lime', text: 'text-brand-black' },
     { key: 'philosophy', chip: 'How we think', title: 'Our Philosophy', icon: 'fas fa-lightbulb', color: 'bg-brand-yellow', text: 'text-brand-black' },
     { key: 'team', chip: 'Who you work with', title: 'Our Team', icon: 'fas fa-users', color: 'bg-brand-red', text: 'text-white' },
-    { key: 'process', chip: 'How it runs', title: 'Our Process', icon: 'fas fa-route', color: 'bg-brand-orange', text: 'text-white' },
+    { key: 'process', chip: 'How it runs', title: 'Our Process', icon: 'fas fa-route', color: 'bg-brand-orange', text: 'text-brand-black' },
     { key: 'faq', chip: 'Before you ask', title: 'Any Questions?', icon: 'fas fa-circle-question', color: 'bg-brand-lime', text: 'text-brand-black' },
     { key: 'arcade', chip: 'Off the clock', title: 'The Arcade', icon: 'fas fa-gamepad', color: 'bg-brand-red', text: 'text-white', wide: true },
 ];
@@ -2910,7 +2913,7 @@ const ChapterCard: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
                     <div className="chip mb-1">{chapter.chip}</div>
                     <h3 className="text-2xl font-bold dark:text-white">{chapter.title}</h3>
                 </div>
-                <div className="pop-1 text-xl text-brand-black/35 dark:text-white/35 group-hover:text-brand-orange dark:group-hover:text-brand-yellow transition-all duration-300 group-hover:translate-x-1">
+                <div className="pop-1 text-xl text-brand-black/35 dark:text-white/35 group-hover:text-brand-orange-ink dark:group-hover:text-brand-orange-lit transition-all duration-300 group-hover:translate-x-1">
                     <i className="fas fa-arrow-right"></i>
                 </div>
             </RouteLink>
@@ -2945,7 +2948,7 @@ const Pager: React.FC<{ pageKey: string }> = ({ pageKey }) => {
     const nameOf = (page: PageDef) => page.nav ?? 'Home';
 
     const step = "group flex items-center gap-3.5 rounded-xl px-4 py-2.5 transition-colors hover:bg-brand-black/[0.04] dark:hover:bg-white/[0.06]";
-    const arrow = "text-brand-black/30 dark:text-white/30 group-hover:text-brand-orange dark:group-hover:text-brand-yellow transition-all duration-300";
+    const arrow = "text-brand-black/30 dark:text-white/30 group-hover:text-brand-orange-ink dark:group-hover:text-brand-orange-lit transition-all duration-300";
 
     return (
         <nav className="px-6 pt-14 pb-4" aria-label="Chapter navigation">
@@ -2975,7 +2978,7 @@ const Pager: React.FC<{ pageKey: string }> = ({ pageKey }) => {
                                 aria-current={here ? 'page' : undefined}
                                 className={`h-1.5 rounded-full transition-all duration-500 ${
                                     here
-                                        ? 'w-7 bg-brand-orange dark:bg-brand-yellow'
+                                        ? 'w-7 bg-brand-orange dark:bg-brand-orange-lit'
                                         : 'w-1.5 bg-brand-black/20 dark:bg-white/25 hover:bg-brand-black/45 dark:hover:bg-white/50'
                                 }`}
                             />
@@ -3024,9 +3027,9 @@ const ContactPage: React.FC<{ initialDescription: string }> = ({ initialDescript
             </div>
             <p className="text-center mt-8 text-brand-black/55 dark:text-gray-400">
                 Or reach us directly at{' '}
-                <a href="mailto:geek@geekingout.net" className="underline underline-offset-4 font-semibold hover:text-brand-orange dark:hover:text-brand-yellow">geek@geekingout.net</a>
+                <a href="mailto:geek@geekingout.net" className="underline underline-offset-4 font-semibold hover:text-brand-orange-ink dark:hover:text-brand-orange-lit">geek@geekingout.net</a>
                 {' '}·{' '}
-                <a href="tel:+16468834335" className="underline underline-offset-4 font-semibold hover:text-brand-orange dark:hover:text-brand-yellow">646-883-4335 (GEEK)</a>
+                <a href="tel:+16468834335" className="underline underline-offset-4 font-semibold hover:text-brand-orange-ink dark:hover:text-brand-orange-lit">646-883-4335 (GEEK)</a>
             </p>
         </div>
     </section>
@@ -3056,7 +3059,7 @@ const NotFoundPage: React.FC = () => (
             </p>
             <RouteLink
                 to="/"
-                className="inline-block px-8 py-4 rounded-2xl font-bold text-lg text-white bg-brand-orange shadow-[0_16px_40px_-16px_rgba(169,72,28,1)] hover:-translate-y-1 transition-transform"
+                className="inline-block px-8 py-4 rounded-2xl font-bold text-lg text-brand-black bg-brand-orange shadow-[0_16px_40px_-16px_rgba(255,105,0,1)] hover:-translate-y-1 transition-transform"
             >
                 Back to home
             </RouteLink>
