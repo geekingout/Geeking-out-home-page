@@ -58,7 +58,7 @@ export const PAGES: PageDef[] = [
         path: '/products',
         nav: 'Products',
         doc: 'Products | Geeking Out Agency',
-        desc: 'A showcase of excellence. We build scalable, agentic, and beautiful software that powers businesses — Cafecito, Schoolz, Loomino.ai, Staffy.io, GameOnClass, UESDAD and Dog Kitchen.',
+        desc: 'A showcase of excellence. We build scalable, agentic, and beautiful software that powers businesses — Cafecito, Schoolz, Loomino.ai, Staffy.io, Kabonzo, UESDAD and Dog Kitchen.',
     },
     {
         key: 'philosophy',
