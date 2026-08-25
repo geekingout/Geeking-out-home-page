@@ -614,7 +614,6 @@ const Header: React.FC<{
     const navRef = useRef<HTMLDivElement>(null);
 
     const socialLinks = [
-        { icon: 'fab fa-instagram', href: 'https://www.instagram.com/geekingoutnet/', label: 'Instagram' },
         { icon: 'fab fa-x-twitter', href: 'https://x.com/geekingoutnet', label: 'X (Twitter)' },
         { icon: 'fab fa-linkedin-in', href: 'https://www.linkedin.com/company/geeking-out', label: 'LinkedIn' },
     ];
@@ -2567,7 +2566,6 @@ const Footer: React.FC = () => {
         { icon: 'fab fa-whatsapp', href: 'https://wa.me/16468834335', label: 'WhatsApp' },
         { icon: 'fab fa-x-twitter', href: 'https://x.com/geekingoutnet', label: 'X (Twitter)' },
         { icon: 'fab fa-facebook', href: 'https://www.facebook.com/geekingout', label: 'Facebook' },
-        { icon: 'fab fa-instagram', href: 'https://www.instagram.com/geekingoutnet/', label: 'Instagram' },
         { icon: 'fab fa-github', href: 'https://github.com/geekingout/', label: 'GitHub' },
         { icon: 'fab fa-linkedin', href: 'https://www.linkedin.com/company/geeking-out', label: 'LinkedIn' },
         { icon: 'fab fa-discord', href: 'https://discord.gg/qBzwhed3PB', label: 'Discord' },
