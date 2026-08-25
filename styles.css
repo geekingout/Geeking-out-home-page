@@ -67,7 +67,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::selection { background-color: #5F2EEA; color: white; }
+        ::selection { background-color: #A9481C; color: white; }
 
         /* ---------- Atmosphere ----------
            Fixed behind everything so scrolling content passes in front of a stable sky
@@ -78,16 +78,16 @@
             z-index: -2;
             pointer-events: none;
             background:
-                radial-gradient(58vw 46vh at 10% 2%, rgba(95, 46, 234, .22), transparent 62%),
+                radial-gradient(58vw 46vh at 10% 2%, rgba(226, 128, 60, .22), transparent 62%),
                 radial-gradient(46vw 38vh at 92% 16%, rgba(163, 249, 83, .16), transparent 62%),
                 radial-gradient(64vw 52vh at 46% 108%, rgba(245, 211, 36, .15), transparent 62%),
                 linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 55%, var(--bg-1) 100%);
         }
         .dark .atmosphere {
             background:
-                radial-gradient(58vw 46vh at 10% 2%, rgba(95, 46, 234, .30), transparent 62%),
+                radial-gradient(58vw 46vh at 10% 2%, rgba(226, 128, 60, .30), transparent 62%),
                 radial-gradient(46vw 38vh at 92% 16%, rgba(163, 249, 83, .10), transparent 62%),
-                radial-gradient(64vw 52vh at 46% 108%, rgba(95, 46, 234, .16), transparent 62%),
+                radial-gradient(64vw 52vh at 46% 108%, rgba(226, 128, 60, .16), transparent 62%),
                 linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 55%, #0a0a14 100%);
         }
 

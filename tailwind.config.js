@@ -18,12 +18,18 @@ export default {
     // showcase swaps the prefix to colour an icon's glow — so the scanner never sees the
     // literal string and would drop the rule.
     safelist: [
-        'bg-brand-purple', 'bg-brand-yellow', 'bg-brand-lime', 'bg-brand-red', 'bg-brand-pink',
+        'bg-brand-orange', 'bg-brand-yellow', 'bg-brand-lime', 'bg-brand-red', 'bg-brand-pink',
     ],
     theme: {
         extend: {
             colors: {
-                'brand-purple': '#5F2EEA',
+                // Burnt sienna, pitched at an Upper East Side brownstone: an orange with
+                // enough red-brown in it to read as stone rather than as a highlighter.
+                'brand-orange': '#A9481C',
+                // The lit face of the same stone. Anything that has to glow — gradients,
+                // haloes, the key light in the hero — uses this; the primary is too deep to
+                // carry light on its own.
+                'brand-ember': '#E2803C',
                 'brand-yellow': '#F5D324',
                 'brand-lime': '#A3F953',
                 'brand-red': '#FF4B4B',

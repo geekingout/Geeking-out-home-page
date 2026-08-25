@@ -34,8 +34,10 @@ import React, { useEffect, useRef, useState } from 'react';
 const W = 480;
 const H = 360;
 
-const PURPLE = '#5F2EEA';
-const VIOLET = '#8B5CF6';
+// Two steps up from the site's brownstone orange. A cabinet monitor is a dark room
+// with light drawn on it, and the primary #A9481C is too deep to read as neon.
+const ORANGE = '#C85A22';
+const AMBER = '#E2803C';
 const LIME = '#A3F953';
 const YELLOW = '#F5D324';
 const RED = '#FF4B4B';
@@ -276,7 +278,7 @@ const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) =>
         ctx.stroke();
         ctx.restore();
 
-        lit(ctx, PURPLE, 20, () => {
+        lit(ctx, ORANGE, 20, () => {
             disc(ctx, s.food.x * CELL + CELL / 2, s.food.y * CELL + CELL / 2, CELL * 0.3);
             ctx.fill();
         });
@@ -341,7 +343,9 @@ const PADDLE_Y = H - 28;
 const BALL_R = 5;
 const BRICK_ROWS = 5;
 const BRICK_COLS = 9;
-const BRICK_COLOURS = [RED, YELLOW, LIME, VIOLET, PURPLE];
+// Rows are stacked, so neighbours have to stay apart. The warm palette left amber and
+// orange touching; splitting them with lime keeps the wall readable mid-rally.
+const BRICK_COLOURS = [RED, AMBER, LIME, YELLOW, ORANGE];
 const BRICK_POINTS = [50, 40, 30, 20, 10];
 
 type Brick = { x: number; y: number; w: number; h: number; colour: string; points: number; alive: boolean };
@@ -458,7 +462,7 @@ const Breakout: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
             ctx.restore();
         }
 
-        lit(ctx, VIOLET, 18, () => {
+        lit(ctx, AMBER, 18, () => {
             roundRect(ctx, s.paddle - PADDLE_W / 2, PADDLE_Y, PADDLE_W, PADDLE_H, PADDLE_H / 2);
             ctx.fill();
         });
@@ -630,10 +634,10 @@ const Asteroids: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }
                     ctx.fill();
                 });
             }
-            ctx.strokeStyle = VIOLET;
-            ctx.fillStyle = 'rgba(95,46,234,0.22)';
+            ctx.strokeStyle = AMBER;
+            ctx.fillStyle = 'rgba(200,90,34,0.22)';
             ctx.lineWidth = 2;
-            ctx.shadowColor = PURPLE;
+            ctx.shadowColor = ORANGE;
             ctx.shadowBlur = 16;
             ctx.beginPath();
             ctx.moveTo(14, 0);
@@ -855,9 +859,9 @@ const Invaders: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
         }
 
         ctx.save();
-        ctx.shadowColor = PURPLE;
+        ctx.shadowColor = ORANGE;
         ctx.shadowBlur = 16;
-        ctx.fillStyle = VIOLET;
+        ctx.fillStyle = AMBER;
         roundRect(ctx, s.ship - SHIP_W / 2, SHIP_Y + 6, SHIP_W, 9, 4);
         ctx.fill();
         roundRect(ctx, s.ship - 8, SHIP_Y, 16, 9, 4);
@@ -1027,7 +1031,7 @@ const GAMES: GameDef[] = [
         name: 'Breakout',
         year: '1976',
         tag: 'The paddle is an aiming device',
-        accent: VIOLET,
+        accent: AMBER,
         ink: '#FFFFFF',
         icon: 'fas fa-table-cells-large',
         controls: 'Arrow keys or the mouse',
@@ -1040,7 +1044,7 @@ const GAMES: GameDef[] = [
         name: 'Asteroids',
         year: '1979',
         tag: 'Momentum is the real enemy',
-        accent: PURPLE,
+        accent: ORANGE,
         ink: '#FFFFFF',
         icon: 'fas fa-meteor',
         controls: 'Arrows to turn and thrust · space to fire',
@@ -1081,7 +1085,7 @@ const PadButton: React.FC<{ keys: KeySet; button: PadKey }> = ({ keys, button })
             onPointerCancel={release}
             onLostPointerCapture={release}
             onContextMenu={e => e.preventDefault()}
-            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-brand-black/70 dark:text-white/70 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-purple dark:active:text-brand-yellow transition-transform"
+            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-brand-black/70 dark:text-white/70 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-orange dark:active:text-brand-yellow transition-transform"
         >
             <i className={button.icon} aria-hidden="true"></i>
         </button>
