@@ -65,3 +65,19 @@ jobs:
           # Force: the branch is the current build, not a history of builds. Rolling
           # back means re-running this workflow from an older commit.
           git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:deploy
+
+      # Plesk is told to pull here rather than by a GitHub webhook on the repo. A push
+      # webhook fires when main is pushed — before this build has run — so Plesk would
+      # fetch the previous build and only catch up when the push to `deploy` fired it a
+      # second time. Pinging from the end of the job means one pull, of the right commit,
+      # after it exists.
+      - name: Tell Plesk to pull
+        env:
+          HOOK: ${{ secrets.PLESK_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "PLESK_DEPLOY_HOOK is not set — skipping."
+            echo "The build is on the deploy branch; use 'Pull now' in Plesk to publish it."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" -o /dev/null -w 'Plesk responded %{http_code}\n'
