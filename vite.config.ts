@@ -18,7 +18,10 @@ import { PAGES, NOT_FOUND, SITE_ORIGIN, hrefFor, type PageDef } from './routes';
 const emitRoutePages = (): Plugin => ({
     name: 'geekingout:emit-route-pages',
     apply: 'build',
+    // The SSR pass builds entry-server.tsx into dist-ssr and has no HTML to patch.
+    applyToEnvironment: (env) => env.name === 'client',
     closeBundle() {
+        if (this.environment?.name === 'ssr') return;
         const outDir = path.resolve(__dirname, 'dist');
         const shell = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
 
@@ -74,8 +77,31 @@ const emitRoutePages = (): Plugin => ({
             `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`
         );
 
+        // For the Plesk/Apache side. Apache's DirectorySlash already redirects /services
+        // to /services/, so routing needs nothing here — this is the 404 document and
+        // cache headers. Inert if the vhost is served by nginx.
+        fs.writeFileSync(path.join(outDir, '.htaccess'), [
+            'ErrorDocument 404 /404.html',
+            '',
+            '<IfModule mod_headers.c>',
+            '  # Asset filenames carry a content hash, so they can be cached forever.',
+            '  <FilesMatch "\\.(js|css|woff2?)$">',
+            '    Header set Cache-Control "public, max-age=31536000, immutable"',
+            '  </FilesMatch>',
+            '  # The HTML must revalidate, or a deploy goes unnoticed.',
+            '  <FilesMatch "\\.html$">',
+            '    Header set Cache-Control "public, max-age=0, must-revalidate"',
+            '  </FilesMatch>',
+            '</IfModule>',
+            '',
+            '<IfModule mod_deflate.c>',
+            '  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/xml image/svg+xml',
+            '</IfModule>',
+            '',
+        ].join('\n'));
+
         const emitted = PAGES.length + 1;
-        this.warn(`emitted ${emitted} route documents, sitemap.xml and robots.txt`);
+        this.warn(`emitted ${emitted} route documents, sitemap.xml, robots.txt and .htaccess`);
     },
 });
 

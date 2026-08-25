@@ -450,8 +450,11 @@ const legacyTarget = (hash: string): string | null => {
     return null;
 };
 
-const useRoute = () => {
-    const [route, setRoute] = useState(readRoute);
+const useRoute = (initial?: string) => {
+    // `initial` is only ever passed by the pre-render, which has no window to read.
+    // In the browser the effect below immediately re-reads the real location, so the
+    // two can never disagree after mount.
+    const [route, setRoute] = useState(() => initial ?? readRoute());
 
     useEffect(() => {
         const onChange = () => setRoute(readRoute());
@@ -3038,8 +3041,8 @@ const NotFoundPage: React.FC = () => (
 
 // --- Main App Component ---
 
-function App() {
-     const route = useRoute();
+function App({ initialRoute }: { initialRoute?: string } = {}) {
+     const route = useRoute(initialRoute);
      const page = PAGES.find(p => p.path === route);
 
      const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -3139,7 +3142,9 @@ function App() {
                     });
                 }
             });
-            gsap.from('[data-hero-word] span', {
+            // Each page has a different subset of these, so only build the tweens whose
+            // targets are actually on it — GSAP warns loudly about empty selectors.
+            if (heroWords.length) gsap.from('[data-hero-word] span', {
                 yPercent: 115,
                 rotateX: -80,
                 opacity: 0,
@@ -3150,7 +3155,9 @@ function App() {
                 ease: 'power4.out',
                 delay: 0.35,
             });
-            gsap.from('[data-hero-sub]', { opacity: 0, y: 26, duration: 1, delay: 1.1, stagger: 0.15 });
+            if (document.querySelector('[data-hero-sub]')) {
+                gsap.from('[data-hero-sub]', { opacity: 0, y: 26, duration: 1, delay: 1.1, stagger: 0.15 });
+            }
 
             const hidden = { opacity: 0, y: 46, z: -150, rotateX: -6, transformPerspective: 1200, transformOrigin: '50% 100%' };
             const shown = { opacity: 1, y: 0, z: 0, rotateX: 0, duration: 0.9, ease: 'power3.out', clearProps: 'all' };
@@ -3168,14 +3175,16 @@ function App() {
             });
 
             // The process spine draws itself at the rate you scroll through the phases.
-            gsap.fromTo('[data-process-line]',
-                { scaleY: 0 },
-                {
-                    scaleY: 1,
-                    ease: 'none',
-                    scrollTrigger: { trigger: '#process', start: 'top 65%', end: 'bottom 75%', scrub: 0.4 },
-                }
-            );
+            if (document.querySelector('[data-process-line]')) {
+                gsap.fromTo('[data-process-line]',
+                    { scaleY: 0 },
+                    {
+                        scaleY: 1,
+                        ease: 'none',
+                        scrollTrigger: { trigger: '#process', start: 'top 65%', end: 'bottom 75%', scrub: 0.4 },
+                    }
+                );
+            }
         });
 
         // Web fonts land after first paint and move everything down a few pixels.

@@ -1,0 +1,228 @@
+@tailwind base;
+@tailwind components;
+
+/* The depth system.
+ *
+ * This block sits between components and utilities on purpose. Under the Play CDN the
+ * generated stylesheet was injected after this CSS, so a utility always won a tie — and
+ * the app is written assuming that. Compiling it in the other order silently broke every
+ * element that combined a component class with a positioning utility: `.panel` sets
+ * position: relative, which beat `.absolute` and dropped the hero's "drag to spin" pill
+ * out of its corner and across the page. Utilities last restores the original cascade.
+ */
+
+        :root {
+            --bg-0: #e9ebf4;
+            --bg-1: #f7f8fc;
+            --panel: rgba(255, 255, 255, 0.66);
+            --panel-flat: rgba(255, 255, 255, 0.88);
+            --panel-solid: #ffffff;
+            --hair: rgba(20, 18, 40, 0.10);
+            --hair-lit: rgba(255, 255, 255, 0.85);
+            --ink: #1A1A1A;
+            --ink-2: rgba(26, 26, 26, 0.64);
+            --ink-3: rgba(26, 26, 26, 0.42);
+            /* Three shadows per surface: a contact shadow, a mid lift and a long soft cast.
+               One shadow reads as a sticker; three read as an object above a floor. */
+            --amb: 0 1px 1px rgba(20, 18, 40, .05), 0 10px 20px -8px rgba(20, 18, 40, .14), 0 34px 60px -34px rgba(20, 18, 40, .38);
+            --amb-lift: 0 2px 4px rgba(20, 18, 40, .07), 0 20px 36px -10px rgba(20, 18, 40, .22), 0 64px 96px -44px rgba(20, 18, 40, .5);
+            --sheen: rgba(255, 255, 255, 0.75);
+            --grid-line: rgba(26, 26, 26, 0.14);
+            /* Pre-mixed translucent surfaces. Tailwind cannot apply an opacity modifier to a
+               var() colour — bg-[var(--bg-1)]/80 silently renders nothing — so the alpha has
+               to be baked into the token itself. */
+            --bar: rgba(247, 248, 252, 0.82);
+            --veil: rgba(236, 238, 246, 0.96);
+        }
+
+        .dark {
+            --bg-0: #06060c;
+            --bg-1: #0d0d19;
+            --panel: rgba(255, 255, 255, 0.045);
+            --panel-flat: rgba(255, 255, 255, 0.07);
+            --panel-solid: #12121f;
+            --hair: rgba(255, 255, 255, 0.11);
+            --hair-lit: rgba(255, 255, 255, 0.22);
+            --ink: #F8F8F8;
+            --ink-2: rgba(248, 248, 248, 0.66);
+            --ink-3: rgba(248, 248, 248, 0.42);
+            --amb: 0 1px 1px rgba(0, 0, 0, .5), 0 12px 26px -10px rgba(0, 0, 0, .7), 0 44px 80px -44px rgba(0, 0, 0, .95);
+            --amb-lift: 0 2px 6px rgba(0, 0, 0, .55), 0 24px 46px -12px rgba(0, 0, 0, .78), 0 80px 120px -56px #000;
+            --sheen: rgba(255, 255, 255, 0.16);
+            --grid-line: rgba(255, 255, 255, 0.10);
+            --bar: rgba(10, 10, 20, 0.82);
+            --veil: rgba(6, 6, 12, 0.96);
+        }
+
+        /* A 3D page has layers that intentionally sit outside the viewport (the perspective
+           floor, the receding deck cards). Clamp both elements so none of them can ever
+           open a horizontal scrollbar. */
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+
+        body {
+            background-color: var(--bg-0);
+            color: var(--ink);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection { background-color: #5F2EEA; color: white; }
+
+        /* ---------- Atmosphere ----------
+           Fixed behind everything so scrolling content passes in front of a stable sky
+           instead of dragging its own background along with it. */
+        .atmosphere {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background:
+                radial-gradient(58vw 46vh at 10% 2%, rgba(95, 46, 234, .22), transparent 62%),
+                radial-gradient(46vw 38vh at 92% 16%, rgba(163, 249, 83, .16), transparent 62%),
+                radial-gradient(64vw 52vh at 46% 108%, rgba(245, 211, 36, .15), transparent 62%),
+                linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 55%, var(--bg-1) 100%);
+        }
+        .dark .atmosphere {
+            background:
+                radial-gradient(58vw 46vh at 10% 2%, rgba(95, 46, 234, .30), transparent 62%),
+                radial-gradient(46vw 38vh at 92% 16%, rgba(163, 249, 83, .10), transparent 62%),
+                radial-gradient(64vw 52vh at 46% 108%, rgba(95, 46, 234, .16), transparent 62%),
+                linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 55%, #0a0a14 100%);
+        }
+
+        /* A ground plane laid back in perspective. It is the cheapest possible horizon:
+           two gradients on one element, tilted, with the far edge faded out. */
+        .horizon {
+            position: fixed;
+            left: -25%;
+            right: -25%;
+            bottom: -10vh;
+            height: 62vh;
+            z-index: -1;
+            pointer-events: none;
+            transform: perspective(420px) rotateX(62deg);
+            transform-origin: 50% 100%;
+            background-image:
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 64px 64px;
+            -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, .35) 45%, transparent 78%);
+            mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, .35) 45%, transparent 78%);
+            opacity: .9;
+        }
+
+        /* ---------- Planes ----------
+           .stage opens a shared vanishing point; children with .tilt rotate inside it. */
+        .stage { perspective: 1600px; perspective-origin: 50% 42%; }
+        .stage-near { perspective: 900px; }
+
+        .tilt {
+            transform-style: preserve-3d;
+            transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(0, 0, 0);
+            transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s cubic-bezier(.2, .8, .2, 1);
+        }
+        /* Depth stops for anything that should float off a tilting surface. */
+        .pop-1 { transform: translateZ(26px); }
+        .pop-2 { transform: translateZ(52px); }
+        .pop-3 { transform: translateZ(84px); }
+
+        /* ---------- Surfaces ---------- */
+        .panel {
+            position: relative;
+            background: var(--panel);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid var(--hair);
+            box-shadow: var(--amb);
+            border-radius: 24px;
+        }
+        /* Hairline of light along the top edge — the single cheapest cue that a surface
+           is facing up toward a light source rather than lying flat on the page. */
+        .panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: linear-gradient(180deg, var(--hair-lit), transparent 42%);
+            opacity: .35;
+        }
+        .panel-solid { background: var(--panel-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+        .lift { transition: transform .5s cubic-bezier(.2, .8, .2, 1), box-shadow .5s cubic-bezier(.2, .8, .2, 1); }
+        .lift:hover { transform: translateY(-6px); box-shadow: var(--amb-lift); }
+
+        /* Specular highlight that tracks the pointer across a surface. --mx/--my are
+           written by the tilt handler in App.tsx. */
+        .sheen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), var(--sheen), transparent 62%);
+            opacity: 0;
+            transition: opacity .45s ease;
+        }
+        .sheen:hover::after, .sheen:focus-within::after { opacity: 1; }
+
+        /* ---------- Type ---------- */
+        .chip {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+        .display {
+            letter-spacing: -0.035em;
+            line-height: 0.95;
+        }
+
+        /* ---------- Accordion ---------- */
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height .55s cubic-bezier(.2, .8, .2, 1); }
+        .faq-icon { transition: transform .4s ease; }
+
+        /* ---------- Carousel ---------- */
+        .deck { perspective: 1900px; perspective-origin: 50% 46%; }
+        .deck-card {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform-style: preserve-3d;
+            transition: transform .75s cubic-bezier(.2, .8, .2, 1), opacity .55s ease, filter .55s ease;
+            will-change: transform, opacity;
+        }
+        /* Horizontal drag spins the deck; vertical drag has to keep scrolling the page. */
+        .grab { cursor: grab; touch-action: pan-y; }
+        .grab:active { cursor: grabbing; }
+
+        /* Fade the marquee into the background at both ends instead of clipping it hard,
+           so the band reads as continuing past the viewport. */
+        .edge-fade {
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+        }
+
+        @media (max-width: 767px) {
+            .panel {
+                background: var(--panel-flat);
+                -webkit-backdrop-filter: none;
+                backdrop-filter: none;
+            }
+        }
+
+        /* ---------- Motion preferences ----------
+           Every entrance animation is skipped in App.tsx when this is set; these rules
+           catch the purely decorative CSS loops. */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: .001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .001ms !important;
+            }
+        }
+
+@tailwind utilities;
