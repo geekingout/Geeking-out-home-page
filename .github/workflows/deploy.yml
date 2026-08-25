@@ -1,0 +1,67 @@
+# Builds the site and publishes the result to a `deploy` branch, which Plesk pulls
+# into httpdocs.
+#
+# Why a built branch rather than letting Plesk run the build: dist/ is gitignored, so
+# pulling the source would deploy App.tsx and package.json instead of a website. The
+# alternative — installing Node on the Plesk box and building there — means a failed
+# `npm ci` takes the live site down with it. Building here keeps production dumb: it
+# only ever receives files that already compiled.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A second push while the first is still building would race to force-push the same
+# branch. Let the newer one win.
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # A type error must not reach the server.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+
+      # Fail loudly if the pre-render silently produced an empty page, rather than
+      # shipping a blank site that looks fine to the deploy step.
+      - name: Verify the build
+        run: |
+          test -f dist/index.html
+          test -f dist/services/index.html
+          test -f dist/sitemap.xml
+          grep -q 'Our Services' dist/services/index.html
+          grep -q 'canonical" href="https://geekingout.net/services/"' dist/services/index.html
+
+      - name: Publish to the deploy branch
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd dist
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -f
+          git commit -q -m "build ${GITHUB_SHA::7}"
+          # Force: the branch is the current build, not a history of builds. Rolling
+          # back means re-running this workflow from an older commit.
+          git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:deploy
