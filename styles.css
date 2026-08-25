@@ -205,6 +205,41 @@
             mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
         }
 
+        /* ---------- Arcade ----------
+           The cabinet screen stays dark in both themes on purpose: an arcade monitor is a
+           dark room with light drawn on it, and neon only reads against black. */
+        .arcade-screen {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            border-radius: 18px;
+            overflow: hidden;
+            background: radial-gradient(120% 92% at 50% -12%, #1b1b38 0%, #0b0b16 55%, #05050c 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(255, 255, 255, .07),
+                inset 0 26px 52px -30px rgba(0, 0, 0, .95),
+                0 18px 40px -26px rgba(20, 18, 40, .8);
+        }
+        /* The curve of the glass, which is one highlight across the top and nothing else. */
+        .arcade-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .085), transparent 30%);
+        }
+
+        /* The on-screen pad is for thumbs. A mouse already has the arrow keys, and four
+           dead buttons under every cabinet would be four pieces of furniture. The same
+           split applies to the attract screen's hint: naming keys a phone does not have
+           is worse than saying nothing. */
+        .arcade-pad, .arcade-touch { display: none; }
+        @media (pointer: coarse) {
+            .arcade-pad { display: flex; }
+            .arcade-touch { display: inline; }
+            .arcade-keys { display: none; }
+        }
+
         @media (max-width: 767px) {
             .panel {
                 background: var(--panel-flat);

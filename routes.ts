@@ -89,6 +89,13 @@ export const PAGES: PageDef[] = [
         desc: 'Answers to what we get asked most: what agents and RAG systems actually do, what projects cost, how long they take, what happens to your data, and which AI models we use.',
     },
     {
+        key: 'arcade',
+        path: '/arcade',
+        nav: 'Arcade',
+        doc: 'Arcade | Geeking Out Agency',
+        desc: 'Four arcade classics — Snake, Breakout, Asteroids and Invaders — rebuilt from scratch in canvas 2D. No engine, no sprite sheets, nothing to install.',
+    },
+    {
         key: 'contact',
         path: '/contact',
         doc: 'Start a Project | Geeking Out Agency',
@@ -121,7 +128,7 @@ export const NOT_FOUND: PageDef = {
 };
 
 /** The order the chapter pager walks. Contact and the legal pages sit outside it. */
-export const CHAPTER_ORDER = ['home', 'services', 'products', 'philosophy', 'team', 'process', 'faq'];
+export const CHAPTER_ORDER = ['home', 'services', 'products', 'philosophy', 'team', 'process', 'faq', 'arcade'];
 
 /**
  * The site has been through two URL schemes. Anything still pointing at the
