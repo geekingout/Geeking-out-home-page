@@ -168,7 +168,7 @@ const productsData = [
         }
     },
     {
-        title: 'GAMEONCLASS',
+        title: 'KABONZO',
         subtitle: 'Classroom Gamification',
         description: 'Turn any lesson into a game. Teachers create, students compete, and AI does the heavy lifting — the classroom arcade that makes every subject feel like recess.',
         icon: 'fas fa-gamepad',
@@ -176,7 +176,7 @@ const productsData = [
         border: 'group-hover:border-brand-yellow',
         glow: 'group-hover:shadow-[0_0_30px_-5px_#F5D324]',
         links: {
-            website: 'https://gameonclass.com/'
+            website: 'https://kabonzo.com/'
         }
     },
     {
