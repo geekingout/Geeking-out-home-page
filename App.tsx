@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { PAGES, CHAPTER_ORDER, LEGACY_ANCHORS, NOT_FOUND, SITE_ORIGIN, hrefFor, type PageDef } from './routes';
+import { ArcadeCabinets } from './arcade-cabinets';
 
 // --- Configuration ---
 // Explicitly type as string to avoid TS error when comparing with the placeholder string below
@@ -511,17 +512,18 @@ const applyHeadMeta = (page: PageDef | undefined) => {
     set('meta[property="twitter:description"]', 'content', meta.desc);
 };
 
-const RouteLink: React.FC<{
+// Everything an <a> takes, minus the href it works out for itself. The wide prop type is
+// load-bearing rather than tidy: JSX skips excess-property checks on a spread, so a link
+// built as {...useTilt()} would compile and then silently drop the pointer handlers if
+// they were not declared here.
+type RouteLinkProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     to: string;
-    className?: string;
-    children: React.ReactNode;
-    onClick?: () => void;
-    onMouseEnter?: React.MouseEventHandler<HTMLAnchorElement>;
-    'aria-label'?: string;
-    'aria-current'?: boolean | 'page';
-}> = ({ to, className, children, onClick, onMouseEnter, ...rest }) => {
+    ref?: React.Ref<HTMLAnchorElement>;
+};
+
+const RouteLink: React.FC<RouteLinkProps> = ({ to, children, onClick, ref, ...rest }) => {
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        onClick?.();
+        onClick?.(e);
         // Leave every intent that is not a plain left-click to the browser:
         // cmd/ctrl-click, shift-click, middle-click and "open in new tab" must
         // still load the real URL rather than being swallowed by the router.
@@ -531,7 +533,7 @@ const RouteLink: React.FC<{
     };
 
     return (
-        <a href={hrefFor(to)} className={className} onClick={handleClick} onMouseEnter={onMouseEnter} {...rest}>
+        <a ref={ref} href={hrefFor(to)} onClick={handleClick} {...rest}>
             {children}
         </a>
     );
@@ -2167,6 +2169,19 @@ const FaqSection: React.FC = () => {
     );
 };
 
+const ArcadeSection: React.FC = () => (
+    <section id="arcade" className="relative pt-44 pb-20 px-6 stage">
+        <div className="container mx-auto max-w-6xl">
+            <SectionHead
+                label="Off the clock"
+                title="The Arcade"
+                blurb="Four classics, rebuilt here from nothing but canvas and arithmetic — no engine, no sprite sheets, nothing to install. Arrow keys at a desk, thumbs on a phone. One machine at a time."
+            />
+            <ArcadeCabinets />
+        </div>
+    </section>
+);
+
 const TestimonialsSection: React.FC = () => {
     // Duplicated once so the -50% marquee loop lands seamlessly.
     const allTestimonials = [...testimonialsData, ...testimonialsData];
@@ -2855,24 +2870,36 @@ const ScrollDepth: React.FC = () => {
 
 // The home page is a menu as much as a landing page: one card per chapter, each opening
 // the page that used to be a section of the same scroll.
-const CHAPTERS = [
+type Chapter = {
+    key: string;
+    chip: string;
+    title: string;
+    icon: string;
+    color: string;
+    text: string;
+    /** The arcade is a postscript rather than a chapter, so it gets the full row. */
+    wide?: boolean;
+};
+
+const CHAPTERS: Chapter[] = [
     { key: 'services', chip: 'What we do', title: 'Our Services', icon: 'fas fa-layer-group', color: 'bg-brand-purple', text: 'text-white' },
     { key: 'products', chip: 'Shipped work', title: 'Our Products', icon: 'fas fa-box-open', color: 'bg-brand-lime', text: 'text-brand-black' },
     { key: 'philosophy', chip: 'How we think', title: 'Our Philosophy', icon: 'fas fa-lightbulb', color: 'bg-brand-yellow', text: 'text-brand-black' },
     { key: 'team', chip: 'Who you work with', title: 'Our Team', icon: 'fas fa-users', color: 'bg-brand-red', text: 'text-white' },
     { key: 'process', chip: 'How it runs', title: 'Our Process', icon: 'fas fa-route', color: 'bg-brand-purple', text: 'text-white' },
     { key: 'faq', chip: 'Before you ask', title: 'Any Questions?', icon: 'fas fa-circle-question', color: 'bg-brand-lime', text: 'text-brand-black' },
+    { key: 'arcade', chip: 'Off the clock', title: 'The Arcade', icon: 'fas fa-gamepad', color: 'bg-brand-red', text: 'text-white', wide: true },
 ];
 
-const ChapterCard: React.FC<{ chapter: typeof CHAPTERS[number] }> = ({ chapter }) => {
+const ChapterCard: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
     const tilt = useTilt<HTMLAnchorElement>(8);
     const page = PAGES.find(p => p.key === chapter.key)!;
 
     return (
-        <div data-depth-in>
-            <a
+        <div data-depth-in className={chapter.wide ? 'md:col-span-2' : undefined}>
+            <RouteLink
                 {...tilt}
-                href={`#${page.path}`}
+                to={page.path}
                 className="tilt panel sheen lift group p-7 flex items-center gap-5 h-full"
             >
                 <div className="relative flex-shrink-0" style={{ transformStyle: 'preserve-3d' }}>
@@ -2888,7 +2915,7 @@ const ChapterCard: React.FC<{ chapter: typeof CHAPTERS[number] }> = ({ chapter }
                 <div className="pop-1 text-xl text-brand-black/35 dark:text-white/35 group-hover:text-brand-purple dark:group-hover:text-brand-yellow transition-all duration-300 group-hover:translate-x-1">
                     <i className="fas fa-arrow-right"></i>
                 </div>
-            </a>
+            </RouteLink>
         </div>
     );
 };
@@ -3247,6 +3274,14 @@ function App({ initialRoute }: { initialRoute?: string } = {}) {
                     <>
                         <FaqSection />
                         <Pager pageKey="faq" />
+                        <ContactCTA />
+                    </>
+                );
+            case '/arcade':
+                return (
+                    <>
+                        <ArcadeSection />
+                        <Pager pageKey="arcade" />
                         <ContactCTA />
                     </>
                 );

@@ -12,7 +12,7 @@
  * verbatim so nothing shifts.
  */
 export default {
-    content: ['./index.html', './index.tsx', './App.tsx', './routes.ts', './entry-server.tsx'],
+    content: ['./index.html', './index.tsx', './App.tsx', './arcade-cabinets.tsx', './routes.ts', './entry-server.tsx'],
     darkMode: 'class',
     // These are assembled at runtime — productsData carries `text-brand-lime` and the
     // showcase swaps the prefix to colour an icon's glow — so the scanner never sees the
