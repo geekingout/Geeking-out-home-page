@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { PAGES, CHAPTER_ORDER, LEGACY_ANCHORS, NOT_FOUND, SITE_ORIGIN, hrefFor, type PageDef } from './routes';
 
 // --- Configuration ---
 // Explicitly type as string to avoid TS error when comparing with the placeholder string below
@@ -422,56 +423,31 @@ function useTilt<T extends HTMLElement>(maxDeg = 9) {
 /* ------------------------------------------------------------------ *
  *  Routing
  *
- *  Hash routes rather than real paths. The site ships as a single
- *  dist/index.html dropped onto a static host, so there is no server to teach
- *  a rewrite rule to — #/services has to be a URL the browser resolves on its
- *  own. In exchange every page is still linkable, bookmarkable and Back-able,
- *  and the whole router costs one event listener.
+ *  Real paths, not hashes. A crawler treats /services as its own document and
+ *  can index it; it treats #/services as a fragment of the home page and will
+ *  not. That is the whole reason for the History API here.
+ *
+ *  It works on a plain static host because the build writes an actual
+ *  index.html into every route directory — no rewrite rule to configure, and a
+ *  direct hit on /services serves a real file with that page's title,
+ *  description and canonical already in the <head>.
  * ------------------------------------------------------------------ */
-
-type PageDef = {
-    key: string;
-    path: string;
-    nav?: string;    // present = appears in the header and menu
-    doc: string;     // document.title while the page is open
-};
-
-const PAGES: PageDef[] = [
-    { key: 'home', path: '/', doc: 'Geeking Out Agency | AI Automation, Agents & Custom Software. Based in NYC' },
-    { key: 'services', path: '/services', nav: 'Services', doc: 'Services | Geeking Out Agency' },
-    { key: 'products', path: '/products', nav: 'Products', doc: 'Products | Geeking Out Agency' },
-    { key: 'philosophy', path: '/philosophy', nav: 'Philosophy', doc: 'Philosophy | Geeking Out Agency' },
-    { key: 'team', path: '/team', nav: 'Team', doc: 'Team | Geeking Out Agency' },
-    { key: 'process', path: '/process', nav: 'Process', doc: 'Process | Geeking Out Agency' },
-    { key: 'faq', path: '/faq', nav: 'FAQ', doc: 'FAQ | Geeking Out Agency' },
-    { key: 'contact', path: '/contact', doc: 'Start a Project | Geeking Out Agency' },
-    { key: 'terms', path: '/terms', doc: 'Terms of Service | Geeking Out Agency' },
-    { key: 'privacy', path: '/privacy', doc: 'Privacy Policy | Geeking Out Agency' },
-];
 
 const NAV_PAGES = PAGES.filter(p => p.nav);
 
-// The order the pager walks. Contact and the legal pages sit outside it.
-const CHAPTER_ORDER = ['home', 'services', 'products', 'philosophy', 'team', 'process', 'faq'];
-
-// This used to be one page of anchors. Anything already linking to #services — an old
-// email, a bookmark, the search index — lands on the page that content moved to.
-const LEGACY_ANCHORS: Record<string, string> = {
-    '#services': '/services',
-    '#products': '/products',
-    '#philosophy': '/philosophy',
-    '#team': '/team',
-    '#process': '/process',
-    '#faqs': '/faq',
-    '#contact': '/contact',
-};
+const normalisePath = (raw: string) => raw.replace(/\/+$/, '') || '/';
 
 const readRoute = (): string => {
-    const raw = typeof window === 'undefined' ? '' : window.location.hash;
-    if (!raw || raw === '#') return '/';
-    if (LEGACY_ANCHORS[raw]) return LEGACY_ANCHORS[raw];
-    if (!raw.startsWith('#/')) return '/';
-    return raw.slice(1).replace(/\/+$/, '') || '/';
+    if (typeof window === 'undefined') return '/';
+    return normalisePath(window.location.pathname);
+};
+
+/** Where an old hash URL should land, or null if this is not one. */
+const legacyTarget = (hash: string): string | null => {
+    if (!hash) return null;
+    if (LEGACY_ANCHORS[hash]) return LEGACY_ANCHORS[hash];
+    if (hash.startsWith('#/')) return normalisePath(hash.slice(1));
+    return null;
 };
 
 const useRoute = () => {
@@ -479,26 +455,57 @@ const useRoute = () => {
 
     useEffect(() => {
         const onChange = () => setRoute(readRoute());
-        window.addEventListener('hashchange', onChange);
+        // popstate covers Back and Forward; navigate() dispatches it too, so one
+        // listener handles every way the route can change.
+        window.addEventListener('popstate', onChange);
 
-        // Rewrite a legacy anchor in place so the address bar agrees with the page.
-        const raw = window.location.hash;
-        if (LEGACY_ANCHORS[raw]) {
-            window.history.replaceState(null, '', `#${LEGACY_ANCHORS[raw]}`);
+        // Anyone arriving on an old hash URL is moved to the real path in place,
+        // without a reload and without adding a history entry.
+        const target = legacyTarget(window.location.hash);
+        if (target) {
+            window.history.replaceState(null, '', target);
+            setRoute(target);
+        } else {
+            onChange();
         }
-        onChange();
 
-        return () => window.removeEventListener('hashchange', onChange);
+        return () => window.removeEventListener('popstate', onChange);
     }, []);
 
     return route;
 };
 
 const navigate = (path: string) => {
-    // Re-selecting the page you are on fires no hashchange, so take the reader back
-    // to the top by hand rather than appearing to do nothing.
-    if (readRoute() === path) window.scrollTo({ top: 0, behavior: 'auto' });
-    window.location.hash = path;
+    // Re-selecting the page you are on pushes nothing, so take the reader back to
+    // the top by hand rather than appearing to do nothing.
+    if (readRoute() === path) {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return;
+    }
+    window.history.pushState(null, '', hrefFor(path));
+    window.dispatchEvent(new PopStateEvent('popstate'));
+};
+
+// The build bakes the right <head> into each route's HTML file, which is what a crawler
+// reads. This keeps it correct after a client-side navigation, where the document is never
+// re-fetched — so a shared link or a Save-to-Pocket picks up the page you were actually on.
+const applyHeadMeta = (page: PageDef | undefined) => {
+    const meta = page ?? NOT_FOUND;
+    const url = `${SITE_ORIGIN}${hrefFor(meta.canonical ?? meta.path)}`;
+    document.title = meta.doc;
+
+    const set = (selector: string, attr: string, value: string) => {
+        const el = document.head.querySelector(selector);
+        if (el) el.setAttribute(attr, value);
+    };
+    set('link[rel="canonical"]', 'href', url);
+    set('meta[name="description"]', 'content', meta.desc);
+    set('meta[property="og:url"]', 'content', url);
+    set('meta[property="og:title"]', 'content', meta.doc);
+    set('meta[property="og:description"]', 'content', meta.desc);
+    set('meta[property="twitter:url"]', 'content', url);
+    set('meta[property="twitter:title"]', 'content', meta.doc);
+    set('meta[property="twitter:description"]', 'content', meta.desc);
 };
 
 const RouteLink: React.FC<{
@@ -509,12 +516,23 @@ const RouteLink: React.FC<{
     onMouseEnter?: React.MouseEventHandler<HTMLAnchorElement>;
     'aria-label'?: string;
     'aria-current'?: boolean | 'page';
-}> = ({ to, className, children, onClick, onMouseEnter, ...rest }) => (
-    // A real anchor, so middle-click, cmd-click and "copy link" all behave.
-    <a href={`#${to}`} className={className} onClick={onClick} onMouseEnter={onMouseEnter} {...rest}>
-        {children}
-    </a>
-);
+}> = ({ to, className, children, onClick, onMouseEnter, ...rest }) => {
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        onClick?.();
+        // Leave every intent that is not a plain left-click to the browser:
+        // cmd/ctrl-click, shift-click, middle-click and "open in new tab" must
+        // still load the real URL rather than being swallowed by the router.
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        navigate(to);
+    };
+
+    return (
+        <a href={hrefFor(to)} className={className} onClick={handleClick} onMouseEnter={onMouseEnter} {...rest}>
+            {children}
+        </a>
+    );
+};
 
 // Section heading. Small chapter label, then the display line — both animate in from depth.
 const SectionHead: React.FC<{
@@ -3056,7 +3074,7 @@ function App() {
      // Arriving on a new page: name it, start at the top, and hand focus to the main
      // region so a screen reader announces the change instead of staying where it was.
      useEffect(() => {
-        document.title = page ? page.doc : 'Page not found | Geeking Out Agency';
+        applyHeadMeta(page);
         setIsMenuOpen(false);
         setSelectedService(null);
         window.scrollTo({ top: 0, behavior: 'auto' });
