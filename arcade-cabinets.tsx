@@ -114,6 +114,56 @@ const useFrames = (running: boolean, step: (dt: number) => void) => {
     }, [running]);
 };
 
+/* ---------- Full screen -------------------------------------------- *
+ *  requestFullscreen where it exists: the browser handles Escape, the OS chrome
+ *  gets out of the way, and nothing on the page can overlap the game.
+ *
+ *  Where it does not — iOS Safari has never allowed it on anything but a
+ *  <video> — the stage becomes a fixed overlay instead. That path needs no
+ *  browser sniffing: if the method is missing or the promise is refused, the
+ *  fallback takes over, which covers every reason a request can fail rather
+ *  than the ones a UA string could have predicted. The player sees the same
+ *  thing; the only difference is that Escape becomes ours to handle.
+ * ------------------------------------------------------------------- */
+
+type StageMode = 'inline' | 'native' | 'overlay';
+
+const useBigScreen = (ref: React.RefObject<HTMLDivElement | null>) => {
+    const [mode, setMode] = useState<StageMode>('inline');
+
+    // Native full screen can also be left by Escape, a gesture, or the browser's own
+    // chrome, so the button follows the document rather than what it was clicked into.
+    useEffect(() => {
+        const sync = () => {
+            if (document.fullscreenElement !== ref.current) {
+                setMode(current => (current === 'native' ? 'inline' : current));
+            }
+        };
+        document.addEventListener('fullscreenchange', sync);
+        return () => document.removeEventListener('fullscreenchange', sync);
+    }, [ref]);
+
+    // The overlay has no browser behind it, so it needs its own way out.
+    useEffect(() => {
+        if (mode !== 'overlay') return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMode('inline'); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [mode]);
+
+    const toggle = () => {
+        const el = ref.current;
+        if (!el) return;
+        if (mode === 'native') { void document.exitFullscreen?.(); setMode('inline'); return; }
+        if (mode === 'overlay') { setMode('inline'); return; }
+        const request = el.requestFullscreen?.bind(el);
+        if (!request) { setMode('overlay'); return; }
+        request().then(() => setMode('native')).catch(() => setMode('overlay'));
+    };
+
+    return { big: mode !== 'inline', overlay: mode === 'overlay', toggle };
+};
+
 /* ---------- Stage -------------------------------------------------- *
  *  Games draw in W x H units and never think about pixels. The context is scaled
  *  once per resize so a phone and a desktop run the identical arithmetic.
@@ -133,9 +183,11 @@ const useStage = () => {
             const width = canvas.clientWidth;
             if (!width) return;
             // Two device pixels per CSS pixel is where the glow stops looking any
-            // smoother and the fill rate starts to matter on a phone.
+            // smoother and the fill rate starts to matter on a phone. The ceiling is for
+            // full screen: a 4K display would otherwise ask for a 3840x2880 backing store,
+            // 44 MB of pixels for a world 480 units wide.
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            const backing = Math.round(width * dpr);
+            const backing = Math.min(Math.round(width * dpr), 1920);
             if (canvas.width === backing) return;
             canvas.width = backing;
             canvas.height = Math.round((backing * H) / W);
@@ -186,8 +238,8 @@ const disc = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) =>
     ctx.arc(x, y, r, 0, Math.PI * 2);
 };
 
-/** The in-screen HUD: lives on the left, wave on the right, deliberately quiet. */
-const hud = (ctx: CanvasRenderingContext2D, left: string, right: string) => {
+/** The in-screen HUD: lives on the left, score in the middle, wave on the right. */
+const hud = (ctx: CanvasRenderingContext2D, left: string, score: number, right: string) => {
     ctx.save();
     ctx.font = '700 11px Poppins, sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.42)';
@@ -196,6 +248,12 @@ const hud = (ctx: CanvasRenderingContext2D, left: string, right: string) => {
     ctx.fillText(left, 12, 11);
     ctx.textAlign = 'right';
     ctx.fillText(right, W - 12, 11);
+    // The score is on the glass rather than only in the chrome around it. Full screen
+    // hides that chrome, and an arcade machine always put the score on the screen anyway.
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = '800 13px Poppins, sans-serif';
+    ctx.fillText(String(score), W / 2, 10);
     ctx.restore();
 };
 
@@ -294,7 +352,7 @@ const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) =>
             ctx.restore();
         });
 
-        hud(ctx, `LENGTH ${s.body.length}`, `SPEED ${s.rate.toFixed(1)}`);
+        hud(ctx, `LENGTH ${s.body.length}`, s.score, `SPEED ${s.rate.toFixed(1)}`);
     };
 
     useEffect(() => { game.current = freshSnake(); draw(); }, [runId, fitted]);
@@ -328,7 +386,7 @@ const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) =>
         if (s.over) onEnd();
     });
 
-    return <canvas ref={canvasRef} className="block w-full h-full touch-pan-y" />;
+    return <canvas ref={canvasRef} className="block w-full h-full object-contain touch-pan-y" />;
 };
 
 /* ------------------------------------------------------------------ *
@@ -470,7 +528,7 @@ const Breakout: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
             ctx.fill();
         });
 
-        hud(ctx, `BALLS ${'●'.repeat(Math.max(0, s.lives))}`, `LEVEL ${s.level}`);
+        hud(ctx, `BALLS ${'●'.repeat(Math.max(0, s.lives))}`, s.score, `LEVEL ${s.level}`);
     };
 
     useEffect(() => { game.current = freshBreak(); draw(); }, [runId, fitted]);
@@ -520,7 +578,7 @@ const Breakout: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
     return (
         <canvas
             ref={canvasRef}
-            className="block w-full h-full touch-pan-y"
+            className="block w-full h-full object-contain touch-pan-y"
             onPointerMove={track}
             onPointerLeave={() => { pointer.current = null; }}
         />
@@ -648,7 +706,7 @@ const Asteroids: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }
             ctx.restore();
         }
 
-        hud(ctx, `SHIPS ${'▲'.repeat(Math.max(0, s.lives))}`, `WAVE ${s.wave}`);
+        hud(ctx, `SHIPS ${'▲'.repeat(Math.max(0, s.lives))}`, s.score, `WAVE ${s.wave}`);
     };
 
     useEffect(() => { game.current = freshRocks(); draw(); }, [runId, fitted]);
@@ -740,7 +798,7 @@ const Asteroids: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }
         if (s.over) onEnd();
     });
 
-    return <canvas ref={canvasRef} className="block w-full h-full touch-pan-y" />;
+    return <canvas ref={canvasRef} className="block w-full h-full object-contain touch-pan-y" />;
 };
 
 /* ------------------------------------------------------------------ *
@@ -868,7 +926,7 @@ const Invaders: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
         ctx.fill();
         ctx.restore();
 
-        hud(ctx, `SHIPS ${'▲'.repeat(Math.max(0, s.lives))}`, `WAVE ${s.wave}`);
+        hud(ctx, `SHIPS ${'▲'.repeat(Math.max(0, s.lives))}`, s.score, `WAVE ${s.wave}`);
     };
 
     useEffect(() => { game.current = freshInvaders(); draw(); }, [runId, fitted]);
@@ -972,7 +1030,7 @@ const Invaders: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd })
         if (s.over) onEnd();
     });
 
-    return <canvas ref={canvasRef} className="block w-full h-full touch-pan-y" />;
+    return <canvas ref={canvasRef} className="block w-full h-full object-contain touch-pan-y" />;
 };
 
 /* ------------------------------------------------------------------ *
@@ -1101,6 +1159,8 @@ const Cabinet: React.FC<{
     const [score, setScore] = useState(0);
     const [best, setBest] = useState(0);
     const [runId, setRunId] = useState(0);
+    const stageRef = useRef<HTMLDivElement>(null);
+    const { big, overlay, toggle } = useBigScreen(stageRef);
 
     const slot = `go.arcade.${game.id}`;
 
@@ -1131,12 +1191,25 @@ const Cabinet: React.FC<{
     const finish = () => { setPhase('over'); onStop(); };
     const stop = () => { setPhase('idle'); setScore(0); setRunId(n => n + 1); onStop(); };
 
+    // Going big claims the machine: the arrow keys would otherwise still belong to
+    // whichever cabinet was last started, which is invisible once this one fills the screen.
+    const goBig = () => { if (!big) onStart(); toggle(); };
+
     const playing = active && phase === 'playing';
 
-    // min-w-0 on the card: a grid item defaults to min-width:auto, and the nowrap strapline
-    // in the header gives this one a 325px floor that overflowed the column on a phone.
+    // Three class choices on the card that are not cosmetic. The last two are the same
+    // rule from different directions: `position: fixed` is relative to the viewport only
+    // while no ancestor establishes a containing block, and transform, perspective, filter
+    // AND backdrop-filter all do. The site's depth vocabulary is built out of exactly
+    // those, so the overlay path has to be kept clear of them.
+    //   min-w-0     — a grid item defaults to min-width:auto, and the nowrap strapline in
+    //                 the header gives this one a 325px floor that overflowed on a phone.
+    //   no `lift`   — its hover transform would trap the expanded stage, and the pointer
+    //                 is by definition over the card when you click Expand.
+    //   no-glass    — `.panel` is a backdrop-filter, which traps it too. Dropped only
+    //                 while expanded, when a full-viewport overlay hides the card anyway.
     return (
-        <div data-depth-in className="panel lift p-4 sm:p-5 flex flex-col gap-4 min-w-0">
+        <div data-depth-in className={`panel p-4 sm:p-5 flex flex-col gap-4 min-w-0${overlay ? ' no-glass' : ''}`}>
             <div className="flex items-center gap-3.5">
                 <div className="relative flex-shrink-0">
                     <div
@@ -1165,35 +1238,67 @@ const Cabinet: React.FC<{
                         <i className="fas fa-stop text-sm" aria-hidden="true"></i>
                     </button>
                 )}
+                <button
+                    type="button"
+                    onClick={goBig}
+                    aria-label={`Play ${game.name} full screen`}
+                    title="Full screen"
+                    className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-brand-black/40 dark:text-white/40 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit hover:bg-brand-orange/10 transition-colors"
+                >
+                    <i className="fas fa-expand text-sm" aria-hidden="true"></i>
+                </button>
             </div>
 
-            <div className="arcade-screen">
-                <game.Screen running={playing} runId={runId} keys={keys} onScore={setScore} onEnd={finish} />
+            <div
+                ref={stageRef}
+                className={`arcade-stage${big ? ' is-big' : ''}${overlay ? ' is-overlay' : ''}`}
+            >
+                <div className="arcade-screen">
+                    <game.Screen running={playing} runId={runId} keys={keys} onScore={setScore} onEnd={finish} />
 
-                {phase !== 'playing' && (
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center bg-[#05050b]/60">
-                        {phase === 'over' && (
-                            <>
-                                <div className="chip text-white/50">Game over</div>
-                                <div className="display font-black text-5xl text-white">{score}</div>
-                            </>
-                        )}
-                        {phase === 'idle' && (
-                            <div className="chip text-white/50">
-                                <span className="arcade-keys">{game.controls}</span>
-                                <span className="arcade-touch">{game.touch}</span>
-                            </div>
-                        )}
-                        {phase === 'paused' && <div className="chip text-white/50">Paused · score {score}</div>}
-                        <button
-                            type="button"
-                            onClick={phase === 'paused' ? resume : start}
-                            className="px-7 py-3 rounded-2xl font-bold text-sm uppercase tracking-[0.18em] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0"
-                            style={{ background: game.accent, color: game.ink, boxShadow: `0 18px 40px -16px ${game.accent}` }}
-                        >
-                            {phase === 'idle' ? 'Play' : phase === 'paused' ? 'Resume' : 'Play again'}
-                        </button>
-                    </div>
+                    {phase !== 'playing' && (
+                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center bg-[#05050b]/60">
+                            {phase === 'over' && (
+                                <>
+                                    <div className="chip text-white/50">Game over</div>
+                                    <div className="display font-black text-5xl text-white">{score}</div>
+                                </>
+                            )}
+                            {phase === 'idle' && (
+                                <div className="chip text-white/50">
+                                    <span className="arcade-keys">{game.controls}</span>
+                                    <span className="arcade-touch">{game.touch}</span>
+                                </div>
+                            )}
+                            {phase === 'paused' && <div className="chip text-white/50">Paused · score {score}</div>}
+                            <button
+                                type="button"
+                                onClick={phase === 'paused' ? resume : start}
+                                className="px-7 py-3 rounded-2xl font-bold text-sm uppercase tracking-[0.18em] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0"
+                                style={{ background: game.accent, color: game.ink, boxShadow: `0 18px 40px -16px ${game.accent}` }}
+                            >
+                                {phase === 'idle' ? 'Play' : phase === 'paused' ? 'Resume' : 'Play again'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="arcade-pad gap-2">
+                    {game.pad.map(button => <PadButton key={button.code} keys={keys} button={button} />)}
+                </div>
+
+                {/* The header's button goes with the page when the stage fills the screen,
+                    so the way back has to live inside the stage. */}
+                {big && (
+                    <button
+                        type="button"
+                        onClick={toggle}
+                        aria-label="Exit full screen"
+                        title="Exit full screen (Esc)"
+                        className="arcade-exit"
+                    >
+                        <i className="fas fa-compress" aria-hidden="true"></i>
+                    </button>
                 )}
             </div>
 
@@ -1206,10 +1311,6 @@ const Cabinet: React.FC<{
                     <div className="chip">Best</div>
                     <div className="font-black text-xl tabular-nums" style={{ color: game.accent }}>{best}</div>
                 </div>
-            </div>
-
-            <div className="arcade-pad gap-2">
-                {game.pad.map(button => <PadButton key={button.code} keys={keys} button={button} />)}
             </div>
         </div>
     );

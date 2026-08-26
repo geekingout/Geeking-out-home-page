@@ -15,6 +15,11 @@ export type PageDef = {
     path: string;
     /** Present = appears in the header nav and the mobile menu. */
     nav?: string;
+    /**
+     * A hand-written aside under the nav label. Decorative and hidden from assistive
+     * tech, so it never becomes part of the link's accessible name.
+     */
+    navNote?: string;
     /** <title> for the page. */
     doc: string;
     /** <meta name="description"> for the page. */
@@ -92,6 +97,7 @@ export const PAGES: PageDef[] = [
         key: 'arcade',
         path: '/arcade',
         nav: 'Arcade',
+        navNote: 'while you think',
         doc: 'Arcade | Geeking Out Agency',
         desc: 'Four arcade classics — Snake, Breakout, Asteroids and Invaders — rebuilt from scratch in canvas 2D. No engine, no sprite sheets, nothing to install.',
     },

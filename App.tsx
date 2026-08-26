@@ -700,6 +700,7 @@ const Header: React.FC<{
                                 }`}
                             >
                                 {page.nav}
+                                {page.navNote && <span className="nav-note" aria-hidden="true">{page.navNote}</span>}
                             </RouteLink>
                         );
                     })}
@@ -749,9 +750,10 @@ const Header: React.FC<{
                             to={page.path}
                             onClick={closeMenu}
                             aria-current={page.path === route ? 'page' : undefined}
-                            className={`font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
+                            className={`relative font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
                         >
                             {page.nav}
+                            {page.navNote && <span className="nav-note nav-note-lg" aria-hidden="true">{page.navNote}</span>}
                         </RouteLink>
                     ))}
                 </nav>
@@ -2171,9 +2173,14 @@ const FaqSection: React.FC = () => {
     );
 };
 
+// No `stage` on this section, deliberately. `.stage` sets perspective, and a perspective
+// is a containing block for fixed-position descendants — which traps the expanded cabinet
+// inside the section instead of letting it cover the viewport. Nothing in here tilts, so
+// the perspective was buying nothing. Add it back only alongside a `.tilt` child, and
+// expect to fix full screen again if you do.
 const ArcadeSection: React.FC = () => (
-    <section id="arcade" className="relative pt-44 pb-20 px-6 stage">
-        <div className="container mx-auto max-w-6xl">
+    <section id="arcade" className="relative pt-44 pb-20 px-6">
+        <div className="container mx-auto max-w-7xl">
             <SectionHead
                 label="Off the clock"
                 title="The Arcade"
