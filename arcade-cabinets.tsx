@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ *
  *  The arcade
  *
- *  Four cabinets — Snake, Breakout, Asteroids, Invaders — drawn with canvas 2D
+ *  Four cabinets — Breakout, Snake, Asteroids, Invaders — drawn with canvas 2D
  *  primitives. No engine, no sprite sheets, no extra dependency: the point of a
  *  page like this on an engineering shop's site is that it is obviously hand
  *  written, and a 40 kB game library would say the opposite.
