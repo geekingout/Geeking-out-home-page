@@ -2173,9 +2173,14 @@ const FaqSection: React.FC = () => {
     );
 };
 
+// No `stage` on this section, deliberately. `.stage` sets perspective, and a perspective
+// is a containing block for fixed-position descendants — which traps the expanded cabinet
+// inside the section instead of letting it cover the viewport. Nothing in here tilts, so
+// the perspective was buying nothing. Add it back only alongside a `.tilt` child, and
+// expect to fix full screen again if you do.
 const ArcadeSection: React.FC = () => (
-    <section id="arcade" className="relative pt-44 pb-20 px-6 stage">
-        <div className="container mx-auto max-w-6xl">
+    <section id="arcade" className="relative pt-44 pb-20 px-6">
+        <div className="container mx-auto max-w-7xl">
             <SectionHead
                 label="Off the clock"
                 title="The Arcade"

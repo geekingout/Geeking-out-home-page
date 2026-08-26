@@ -257,6 +257,81 @@
             background: linear-gradient(180deg, rgba(255, 255, 255, .085), transparent 30%);
         }
 
+        /* The stage is screen plus pad, and it is the element that goes full screen —
+           taking the screen alone would leave every phone without its d-pad. */
+        .arcade-stage {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Full screen, by either route: the browser's, or the fixed overlay used where
+           requestFullscreen does not exist. Same rules, so they look identical. */
+        .arcade-stage.is-big {
+            background: #05050c;
+            padding: 14px;
+            gap: 14px;
+        }
+        .arcade-stage.is-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+        }
+        /* Set on the card hosting an expanded stage. A backdrop-filter is a containing
+           block for fixed-position descendants, so the glass has to come off for the
+           overlay to reach the viewport rather than the card. */
+        .no-glass {
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+        /* The screen gives up its 4:3 and takes the room instead. The canvas keeps a 4:3
+           backing store whatever shape the box is, so object-fit letterboxes it rather
+           than stretching it — the drawing maps x and y independently and would shear. */
+        .arcade-stage.is-big > .arcade-screen {
+            flex: 1 1 auto;
+            min-height: 0;
+            aspect-ratio: auto;
+            border-radius: 12px;
+        }
+
+        /* A portrait phone leaves a lot of room under a 4:3 playfield, and the pad is the
+           thing that benefits from it. The colours are restated rather than inherited
+           because the pad's light-theme surface is nearly white, which is right on the
+           page and wrong against a stage that is black in either theme. Specificity is
+           what beats the utilities on the button, hence the descendant selector. */
+        .arcade-stage.is-big .arcade-pad > button {
+            height: 64px;
+            font-size: 22px;
+            background: rgba(255, 255, 255, .07);
+            border-color: rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .75);
+        }
+        .arcade-stage.is-big .arcade-pad > button:active {
+            background: rgba(255, 255, 255, .14);
+            color: #fff;
+        }
+
+        .arcade-exit {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            z-index: 30;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, .55);
+            background: rgba(10, 10, 20, .55);
+            border: 1px solid rgba(255, 255, 255, .14);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            transition: color .3s ease, background-color .3s ease;
+        }
+        .arcade-exit:hover { color: #fff; background: rgba(10, 10, 20, .8); }
+
         /* The on-screen pad is for thumbs. A mouse already has the arrow keys, and four
            dead buttons under every cabinet would be four pieces of furniture. The same
            split applies to the attract screen's hint: naming keys a phone does not have
