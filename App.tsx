@@ -802,10 +802,22 @@ const MobileNavBar: React.FC<{ route: string; isMenuOpen: boolean; onMenuToggle:
                  {/* Center Spacer for Button */}
                  <div className="w-full pointer-events-none"></div>
 
-                 <RouteLink to="/contact" aria-current={route === '/contact' ? 'page' : undefined} className={tab(route === '/contact')}>
-                    <i className="fas fa-paper-plane text-xl mb-1 group-active:scale-90 transition-transform"></i>
-                    <span className="text-[10px] font-bold">Contact</span>
-                 </RouteLink>
+                 {/* Leaves the site, so a plain anchor rather than a RouteLink — and no
+                     aria-current, since it is not a page you can be on. The rocket beside it
+                     still goes to /contact for anyone who would rather write than message. */}
+                 <a
+                    href="https://wa.me/16468834335"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={tab(false)}
+                 >
+                    <i className="fab fa-whatsapp text-xl mb-1 group-active:scale-90 transition-transform"></i>
+                    {/* A pixel smaller than its neighbours: at 10px this label is exactly as wide as its
+                        cell, so the wider fallback font that renders before Poppins arrives would
+                        push the tab out of line, and on a 320px phone it stretched its cell a
+                        third wider than the rest. The size difference is not perceptible. */}
+                    <span className="text-[9px] font-bold whitespace-nowrap">WhatsApp me</span>
+                 </a>
 
                  <button onClick={onMenuToggle} className={tab(false)}>
                     <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl mb-1 group-active:scale-90 transition-transform`}></i>
