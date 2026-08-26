@@ -278,6 +278,14 @@ type SnakeState = {
     over: boolean;
 };
 
+/** The four ways a snake can point, and every key that asks for each. */
+const HEADINGS = [
+    { x: -1, y: 0, codes: ['ArrowLeft', 'KeyA'] },
+    { x: 1, y: 0, codes: ['ArrowRight', 'KeyD'] },
+    { x: 0, y: -1, codes: ['ArrowUp', 'KeyW'] },
+    { x: 0, y: 1, codes: ['ArrowDown', 'KeyS'] },
+];
+
 const placeFood = (body: Cell[]): Cell => {
     // A 24x18 board never fills up enough for rejection sampling to be the slow way,
     // and the alternative — rebuilding the free list every meal — is the slow way.
@@ -290,7 +298,7 @@ const placeFood = (body: Cell[]): Cell => {
 
 const freshSnake = (): SnakeState => {
     const body = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }];
-    return { body, dir: { x: 1, y: 0 }, turns: [], food: placeFood(body), clock: 0, rate: 7.5, score: 0, over: false };
+    return { body, dir: { x: 1, y: 0 }, turns: [], food: placeFood(body), clock: 0, rate: 5, score: 0, over: false };
 };
 
 const stepSnake = (s: SnakeState) => {
@@ -308,7 +316,7 @@ const stepSnake = (s: SnakeState) => {
     s.body.unshift(head);
     if (head.x === s.food.x && head.y === s.food.y) {
         s.score += 10;
-        s.rate = Math.min(15, s.rate + 0.35);
+        s.rate = Math.min(10.5, s.rate + 0.18);
         s.food = placeFood(s.body);
     } else {
         s.body.pop();
@@ -318,6 +326,9 @@ const stepSnake = (s: SnakeState) => {
 const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) => {
     const { canvasRef, ctxRef, fitted } = useStage();
     const game = useRef<SnakeState>(freshSnake());
+    // What was down last frame. Snake is the one game that wants key presses rather than
+    // keys held, and this is the difference between the two.
+    const before = useRef(new Set<string>());
 
     const draw = () => {
         const ctx = ctxRef.current;
@@ -355,7 +366,7 @@ const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) =>
         hud(ctx, `LENGTH ${s.body.length}`, s.score, `SPEED ${s.rate.toFixed(1)}`);
     };
 
-    useEffect(() => { game.current = freshSnake(); draw(); }, [runId, fitted]);
+    useEffect(() => { game.current = freshSnake(); before.current.clear(); draw(); }, [runId, fitted]);
 
     useFrames(running, dt => {
         const s = game.current;
@@ -365,14 +376,21 @@ const Snake: React.FC<GameProps> = ({ running, runId, keys, onScore, onEnd }) =>
         // Turns are queued, not applied straight to `dir`: two keys inside one step would
         // otherwise let the snake reverse through its own neck.
         const facing = s.turns.length ? s.turns[s.turns.length - 1] : s.dir;
-        const want =
-            held(keys, 'ArrowLeft', 'KeyA') ? { x: -1, y: 0 } :
-            held(keys, 'ArrowRight', 'KeyD') ? { x: 1, y: 0 } :
-            held(keys, 'ArrowUp', 'KeyW') ? { x: 0, y: -1 } :
-            held(keys, 'ArrowDown', 'KeyS') ? { x: 0, y: 1 } : null;
-        const straightOn = want && want.x === facing.x && want.y === facing.y;
-        const reversing = want && want.x === -facing.x && want.y === -facing.y;
-        if (want && !straightOn && !reversing && s.turns.length < 2) s.turns.push(want);
+        // Take the first newly pressed key that is a quarter turn from where the snake
+        // points. Two details, both of which the game was unplayable without:
+        //   Testing both axes at once picks exactly the two perpendicular headings, which
+        //   rejects the reverse and the direction already being travelled. Reading the
+        //   keys in a fixed order instead let whichever came first in that order mask the
+        //   others, so holding the direction of travel — what everyone does — stopped the
+        //   snake turning at all.
+        //   Pressed, not held: with two perpendicular keys down at once, a held key would
+        //   re-enter the queue every step and zigzag the snake forever.
+        const turn = HEADINGS.find(h =>
+            h.x !== facing.x && h.y !== facing.y &&
+            h.codes.some(code => keys.current.has(code) && !before.current.has(code))
+        );
+        if (turn && s.turns.length < 2) s.turns.push({ x: turn.x, y: turn.y });
+        before.current = new Set(keys.current);
 
         const interval = 1 / s.rate;
         s.clock += dt;
@@ -1068,20 +1086,10 @@ const RIGHT: PadKey = { code: 'ArrowRight', icon: 'fas fa-caret-right', label: '
 const UP: PadKey = { code: 'ArrowUp', icon: 'fas fa-caret-up', label: 'Up' };
 const DOWN: PadKey = { code: 'ArrowDown', icon: 'fas fa-caret-down', label: 'Down' };
 
+// Breakout leads. It is the one cabinet that needs no explaining — the mouse moves the
+// paddle, the ball does the rest — so it is the safest thing to meet first. The order
+// after it is roughly how much the game asks of you.
 const GAMES: GameDef[] = [
-    {
-        id: 'snake',
-        name: 'Snake',
-        year: '1976',
-        tag: 'Eat, grow, run out of room',
-        accent: LIME,
-        ink: '#1A1A1A',
-        icon: 'fas fa-worm',
-        controls: 'Arrow keys to steer',
-        touch: 'Steer with the pad below',
-        pad: [LEFT, UP, DOWN, RIGHT],
-        Screen: Snake,
-    },
     {
         id: 'breakout',
         name: 'Breakout',
@@ -1094,6 +1102,19 @@ const GAMES: GameDef[] = [
         touch: 'Slide the paddle below',
         pad: [LEFT, RIGHT],
         Screen: Breakout,
+    },
+    {
+        id: 'snake',
+        name: 'Snake',
+        year: '1976',
+        tag: 'Eat, grow, run out of room',
+        accent: LIME,
+        ink: '#1A1A1A',
+        icon: 'fas fa-worm',
+        controls: 'Arrow keys to steer',
+        touch: 'Steer with the pad below',
+        pad: [LEFT, UP, DOWN, RIGHT],
+        Screen: Snake,
     },
     {
         id: 'asteroids',
