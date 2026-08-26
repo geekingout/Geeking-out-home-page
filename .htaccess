@@ -1,0 +1,16 @@
+ErrorDocument 404 /404.html
+
+<IfModule mod_headers.c>
+  # Asset filenames carry a content hash, so they can be cached forever.
+  <FilesMatch "\.(js|css|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # The HTML must revalidate, or a deploy goes unnoticed.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/xml image/svg+xml
+</IfModule>
