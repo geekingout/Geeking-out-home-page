@@ -700,6 +700,7 @@ const Header: React.FC<{
                                 }`}
                             >
                                 {page.nav}
+                                {page.navNote && <span className="nav-note" aria-hidden="true">{page.navNote}</span>}
                             </RouteLink>
                         );
                     })}
@@ -749,9 +750,10 @@ const Header: React.FC<{
                             to={page.path}
                             onClick={closeMenu}
                             aria-current={page.path === route ? 'page' : undefined}
-                            className={`font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
+                            className={`relative font-bold text-3xl transition-colors ${page.path === route ? 'text-brand-orange-ink dark:text-brand-orange-lit' : 'text-brand-black dark:text-white hover:text-brand-orange-ink dark:hover:text-brand-orange-lit'}`}
                         >
                             {page.nav}
+                            {page.navNote && <span className="nav-note nav-note-lg" aria-hidden="true">{page.navNote}</span>}
                         </RouteLink>
                     ))}
                 </nav>

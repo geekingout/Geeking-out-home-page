@@ -33,6 +33,7 @@
                to be baked into the token itself. */
             --bar: rgba(247, 248, 252, 0.82);
             --veil: rgba(236, 238, 246, 0.96);
+            --brand-note: #CA3500;
         }
 
         .dark {
@@ -52,6 +53,7 @@
             --grid-line: rgba(255, 255, 255, 0.10);
             --bar: rgba(10, 10, 20, 0.82);
             --veil: rgba(6, 6, 12, 0.96);
+            --brand-note: #FF8904;
         }
 
         /* A 3D page has layers that intentionally sit outside the viewport (the perspective
@@ -203,6 +205,32 @@
         .edge-fade {
             -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
             mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+        }
+
+        /* ---------- Nav aside ----------
+           A hand-written note under one nav label. Absolutely positioned on purpose: the
+           desktop nav is a flex row whose hover pill is a fixed 36px tall, so an item that
+           grew a second line would misalign the row and outgrow the pill. Taking it out of
+           flow means adding one cannot move anything. */
+        .nav-note {
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            margin-top: -3px;
+            transform: translateX(-50%) rotate(-5deg);
+            transform-origin: 50% 0;
+            font-family: 'Caveat', 'Segoe Script', cursive;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 1;
+            white-space: nowrap;
+            pointer-events: none;
+            color: var(--brand-note);
+        }
+        /* The mobile menu sets its links at text-3xl, so the note scales with them. */
+        .nav-note-lg {
+            font-size: 22px;
+            margin-top: 1px;
         }
 
         /* ---------- Arcade ----------
