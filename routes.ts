@@ -99,7 +99,7 @@ export const PAGES: PageDef[] = [
         nav: 'Arcade',
         navNote: 'while you think',
         doc: 'Arcade | Geeking Out Agency',
-        desc: 'Four arcade classics — Snake, Breakout, Asteroids and Invaders — rebuilt from scratch in canvas 2D. No engine, no sprite sheets, nothing to install.',
+        desc: 'Four arcade classics — Breakout, Snake, Asteroids and Invaders — rebuilt from scratch in canvas 2D. No engine, no sprite sheets, nothing to install.',
     },
     {
         key: 'contact',
