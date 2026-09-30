@@ -465,7 +465,7 @@ const ServiceRow: React.FC<{ service: Service; index: number; open: boolean; onT
                     <span aria-hidden="true" className={`w-9 h-9 rounded-[10px] border border-line-2 grid place-items-center text-[18px] text-ink transition-transform duration-300 ${open ? 'rotate-45 border-ink' : ''}`}>+</span>
                 </span>
             </button>
-            <div id={id} ref={body} className="faq-answer" aria-hidden={!open}>
+            <div id={id} ref={body} className="faq-answer" aria-hidden={!open} inert={!open || undefined}>
                 <div className="pb-8 grid gap-6 min-[901px]:grid-cols-[56px_minmax(0,1fr)]">
                     <span aria-hidden="true" />
                     <div className="max-w-[720px]">
@@ -644,7 +644,7 @@ const FaqItem: React.FC<{ faq: { question: string; answer: string }; index: numb
                 </span>
                 <span aria-hidden="true" className={`w-9 h-9 flex-none rounded-[10px] border border-line-2 grid place-items-center text-[18px] text-ink transition-transform duration-300 ${open ? 'rotate-45 border-ink' : ''}`}>+</span>
             </button>
-            <div id={id} ref={body} className="faq-answer" aria-hidden={!open}>
+            <div id={id} ref={body} className="faq-answer" aria-hidden={!open} inert={!open || undefined}>
                 <p className="m-0 pb-6 pl-[calc(2ch+16px)] text-[16px] leading-relaxed text-ink-2 max-w-[760px] [text-wrap:pretty]">{faq.answer}</p>
             </div>
         </div>
