@@ -34,12 +34,12 @@ import React, { useEffect, useRef, useState } from 'react';
 const W = 480;
 const H = 360;
 
-const ORANGE = '#FF6900';
-const AMBER = '#FF8904';
-const LIME = '#A3F953';
-const YELLOW = '#F5D324';
-const RED = '#FF4B4B';
-const WHITE = '#F8F8F8';
+const ORANGE = '#FF5A1F';
+const AMBER = '#FF8A5C';
+const LIME = '#2EB884';
+const YELLOW = '#FFB899';
+const RED = '#E0437A';
+const WHITE = '#FAF8F5';
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
@@ -1081,10 +1081,10 @@ type GameDef = {
     Screen: React.FC<GameProps>;
 };
 
-const LEFT: PadKey = { code: 'ArrowLeft', icon: 'fas fa-caret-left', label: 'Left' };
-const RIGHT: PadKey = { code: 'ArrowRight', icon: 'fas fa-caret-right', label: 'Right' };
-const UP: PadKey = { code: 'ArrowUp', icon: 'fas fa-caret-up', label: 'Up' };
-const DOWN: PadKey = { code: 'ArrowDown', icon: 'fas fa-caret-down', label: 'Down' };
+const LEFT: PadKey = { code: 'ArrowLeft', icon: '◀', label: 'Left' };
+const RIGHT: PadKey = { code: 'ArrowRight', icon: '▶', label: 'Right' };
+const UP: PadKey = { code: 'ArrowUp', icon: '▲', label: 'Up' };
+const DOWN: PadKey = { code: 'ArrowDown', icon: '▼', label: 'Down' };
 
 // Breakout leads. It is the one cabinet that needs no explaining — the mouse moves the
 // paddle, the ball does the rest — so it is the safest thing to meet first. The order
@@ -1097,7 +1097,7 @@ const GAMES: GameDef[] = [
         tag: 'The paddle is an aiming device',
         accent: AMBER,
         ink: '#FFFFFF',
-        icon: 'fas fa-table-cells-large',
+        icon: 'BK',
         controls: 'Arrow keys or the mouse',
         touch: 'Slide the paddle below',
         pad: [LEFT, RIGHT],
@@ -1109,8 +1109,8 @@ const GAMES: GameDef[] = [
         year: '1976',
         tag: 'Eat, grow, run out of room',
         accent: LIME,
-        ink: '#1A1A1A',
-        icon: 'fas fa-worm',
+        ink: '#17151A',
+        icon: 'SN',
         controls: 'Arrow keys to steer',
         touch: 'Steer with the pad below',
         pad: [LEFT, UP, DOWN, RIGHT],
@@ -1123,10 +1123,10 @@ const GAMES: GameDef[] = [
         tag: 'Momentum is the real enemy',
         accent: ORANGE,
         ink: '#FFFFFF',
-        icon: 'fas fa-meteor',
+        icon: 'AS',
         controls: 'Arrows to turn and thrust · space to fire',
         touch: 'Turn, thrust and fire below',
-        pad: [LEFT, RIGHT, UP, { code: 'Space', icon: 'fas fa-circle-dot', label: 'Fire' }],
+        pad: [LEFT, RIGHT, UP, { code: 'Space', icon: '●', label: 'Fire' }],
         Screen: Asteroids,
     },
     {
@@ -1136,10 +1136,10 @@ const GAMES: GameDef[] = [
         tag: 'One shot in the air at a time',
         accent: RED,
         ink: '#FFFFFF',
-        icon: 'fas fa-satellite',
+        icon: 'IN',
         controls: 'Arrows to move · space to fire',
         touch: 'Move and fire below',
-        pad: [LEFT, RIGHT, { code: 'Space', icon: 'fas fa-circle-dot', label: 'Fire' }],
+        pad: [LEFT, RIGHT, { code: 'Space', icon: '●', label: 'Fire' }],
         Screen: Invaders,
     },
 ];
@@ -1162,9 +1162,9 @@ const PadButton: React.FC<{ keys: KeySet; button: PadKey }> = ({ keys, button })
             onPointerCancel={release}
             onLostPointerCapture={release}
             onContextMenu={e => e.preventDefault()}
-            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-brand-black/70 dark:text-white/70 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-orange-ink dark:active:text-brand-orange-lit transition-transform"
+            className="flex-1 h-12 rounded-xl border border-[var(--hair)] bg-[var(--panel-flat)] text-lg text-ink-2 flex items-center justify-center touch-none select-none active:scale-95 active:text-brand-orange-ink transition-transform"
         >
-            <i className={button.icon} aria-hidden="true"></i>
+            <span aria-hidden="true">{button.icon}</span>
         </button>
     );
 };
@@ -1230,23 +1230,16 @@ const Cabinet: React.FC<{
     //   no-glass    — `.panel` is a backdrop-filter, which traps it too. Dropped only
     //                 while expanded, when a full-viewport overlay hides the card anyway.
     return (
-        <div data-depth-in className={`panel p-4 sm:p-5 flex flex-col gap-4 min-w-0${overlay ? ' no-glass' : ''}`}>
+        <div data-reveal="0" className={`panel p-4 sm:p-5 flex flex-col gap-4 min-w-0${overlay ? ' no-glass' : ''}`}>
             <div className="flex items-center gap-3.5">
-                <div className="relative flex-shrink-0">
-                    <div
-                        className="absolute inset-0 rounded-2xl blur-lg opacity-45"
-                        style={{ background: game.accent }}
-                        aria-hidden="true"
-                    />
-                    <div
-                        className="relative w-11 h-11 rounded-2xl flex items-center justify-center text-lg shadow-[0_12px_28px_-12px_rgba(20,18,40,.8)]"
-                        style={{ background: game.accent, color: game.ink }}
-                    >
-                        <i className={game.icon} aria-hidden="true"></i>
-                    </div>
+                <div
+                    className="relative flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+                    style={{ background: game.accent, color: game.ink }}
+                >
+                    <span aria-hidden="true" className="font-mono text-[12px] font-medium">{game.icon}</span>
                 </div>
                 <div className="flex-grow min-w-0">
-                    <h3 className="text-lg font-black leading-tight text-brand-black dark:text-white">{game.name}</h3>
+                    <h3 className="font-display uppercase font-bold text-[22px] leading-none text-ink">{game.name}</h3>
                     <p className="chip truncate">{game.year} · {game.tag}</p>
                 </div>
                 {playing && (
@@ -1254,9 +1247,9 @@ const Cabinet: React.FC<{
                         type="button"
                         onClick={stop}
                         aria-label={`Stop ${game.name}`}
-                        className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-brand-black/40 dark:text-white/40 hover:text-brand-red hover:bg-brand-red/10 transition-colors"
+                        className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-brand-black/40 hover:text-brand-red hover:bg-brand-red/10 transition-colors"
                     >
-                        <i className="fas fa-stop text-sm" aria-hidden="true"></i>
+                        <span aria-hidden="true" className="text-[12px] leading-none">■</span>
                     </button>
                 )}
                 <button
@@ -1264,9 +1257,9 @@ const Cabinet: React.FC<{
                     onClick={goBig}
                     aria-label={`Play ${game.name} full screen`}
                     title="Full screen"
-                    className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-brand-black/40 dark:text-white/40 hover:text-brand-orange-ink dark:hover:text-brand-orange-lit hover:bg-brand-orange/10 transition-colors"
+                    className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-brand-black/40 hover:text-brand-orange-ink hover:bg-brand-orange/10 transition-colors"
                 >
-                    <i className="fas fa-expand text-sm" aria-hidden="true"></i>
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M8.5 1.5h4v4M12.5 1.5 8 6M5.5 12.5h-4v-4M1.5 12.5 6 8"/></svg>
                 </button>
             </div>
 
@@ -1278,11 +1271,11 @@ const Cabinet: React.FC<{
                     <game.Screen running={playing} runId={runId} keys={keys} onScore={setScore} onEnd={finish} />
 
                     {phase !== 'playing' && (
-                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center bg-[#05050b]/60">
+                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center bg-[#0D0908]/60">
                             {phase === 'over' && (
                                 <>
                                     <div className="chip text-white/50">Game over</div>
-                                    <div className="display font-black text-5xl text-white">{score}</div>
+                                    <div className="display text-5xl text-white">{score}</div>
                                 </>
                             )}
                             {phase === 'idle' && (
@@ -1295,7 +1288,7 @@ const Cabinet: React.FC<{
                             <button
                                 type="button"
                                 onClick={phase === 'paused' ? resume : start}
-                                className="px-7 py-3 rounded-2xl font-bold text-sm uppercase tracking-[0.18em] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0"
+                                className="px-7 py-3 rounded-xl font-mono font-medium text-sm uppercase tracking-[0.14em] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0"
                                 style={{ background: game.accent, color: game.ink, boxShadow: `0 18px 40px -16px ${game.accent}` }}
                             >
                                 {phase === 'idle' ? 'Play' : phase === 'paused' ? 'Resume' : 'Play again'}
@@ -1318,7 +1311,7 @@ const Cabinet: React.FC<{
                         title="Exit full screen (Esc)"
                         className="arcade-exit"
                     >
-                        <i className="fas fa-compress" aria-hidden="true"></i>
+                        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M12.5 5.5h-4v-4M8.5 5.5 13 1M1.5 8.5h4v4M5.5 8.5 1 13"/></svg>
                     </button>
                 )}
             </div>
@@ -1326,11 +1319,11 @@ const Cabinet: React.FC<{
             <div className="flex items-center justify-between gap-4 px-1">
                 <div>
                     <div className="chip">Score</div>
-                    <div className="font-black text-xl tabular-nums text-brand-black dark:text-white">{score}</div>
+                    <div className="font-display font-bold text-2xl tabular-nums text-ink">{score}</div>
                 </div>
                 <div className="text-right">
                     <div className="chip">Best</div>
-                    <div className="font-black text-xl tabular-nums" style={{ color: game.accent }}>{best}</div>
+                    <div className="font-display font-bold text-2xl tabular-nums" style={{ color: game.accent }}>{best}</div>
                 </div>
             </div>
         </div>
