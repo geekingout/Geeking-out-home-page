@@ -228,8 +228,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @keyframes go-drift { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -14px, 0); } }
 .pulse-dot { animation: go-pulse 2.4s ease-in-out infinite; }
 
-/* ---------- FAQ ---------- */
-.faq-answer { max-height: 0; overflow: hidden; transition: max-height .55s cubic-bezier(.2, .8, .2, 1); }
+/* ---------- Folds (service rows, FAQ) ----------
+   A grid row animating between 0fr and 1fr opens to whatever height the content
+   has, so nothing is measured and a late font swap cannot clip the last line. */
+.fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .55s cubic-bezier(.2, .8, .2, 1);
+}
+.fold[data-open="true"] { grid-template-rows: 1fr; }
+.fold > * { min-height: 0; overflow: hidden; } /* padding belongs one level further in */
 
 /* ---------- Legal prose ---------- */
 .legal { white-space: pre-wrap; line-height: 1.7; }

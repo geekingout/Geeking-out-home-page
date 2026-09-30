@@ -112,25 +112,54 @@ export const reducedMotion = () =>
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 /**
- * Runs `cb` on scroll and resize (coalesced to one call per frame), once on
- * mount, and again at a few delays after mount so late layout — fonts, images,
- * the canvas sizing itself — is measured too.
+ * One scroll bus for the whole page. Every subscriber's callback runs in the
+ * same animation frame after a scroll or resize, so the page does one round of
+ * measuring per frame however many sections are listening. The listeners exist
+ * only while something is subscribed.
+ */
+const scrollSubs = new Set<() => void>();
+let scrollRaf = 0;
+let scrollBound = false;
+
+const runScrollSubs = () => { scrollRaf = 0; scrollSubs.forEach(cb => cb()); };
+const scheduleScrollSubs = () => { if (!scrollRaf) scrollRaf = requestAnimationFrame(runScrollSubs); };
+
+const subscribeScroll = (cb: () => void) => {
+    scrollSubs.add(cb);
+    if (!scrollBound) {
+        scrollBound = true;
+        window.addEventListener('scroll', scheduleScrollSubs, { passive: true });
+        window.addEventListener('resize', scheduleScrollSubs);
+    }
+    return () => {
+        scrollSubs.delete(cb);
+        if (scrollSubs.size === 0 && scrollBound) {
+            scrollBound = false;
+            window.removeEventListener('scroll', scheduleScrollSubs);
+            window.removeEventListener('resize', scheduleScrollSubs);
+            cancelAnimationFrame(scrollRaf);
+            scrollRaf = 0;
+        }
+    };
+};
+
+/**
+ * Runs `cb` on scroll and resize (once per frame, shared with every other
+ * subscriber), once on mount, and again at a few delays after mount so late
+ * layout — fonts, images, the canvas sizing itself — is measured too.
  */
 export const useOnScroll = (cb: () => void, deps: React.DependencyList = []) => {
     useEffect(() => {
-        let raf = 0;
-        const run = () => { raf = 0; cb(); };
-        const schedule = () => { if (!raf) raf = requestAnimationFrame(run); };
-        window.addEventListener('scroll', schedule, { passive: true });
-        window.addEventListener('resize', schedule);
-        cb();
-        const timers = [60, 400, 1200].map(ms => window.setTimeout(cb, ms));
+        let live = true;
+        const safe = () => { if (live) cb(); };
+        const unsubscribe = subscribeScroll(safe);
+        safe();
+        const timers = [60, 400, 1200].map(ms => window.setTimeout(safe, ms));
         const fonts = (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts;
-        fonts?.ready.then(cb);
+        fonts?.ready.then(safe);
         return () => {
-            window.removeEventListener('scroll', schedule);
-            window.removeEventListener('resize', schedule);
-            cancelAnimationFrame(raf);
+            live = false;
+            unsubscribe();
             timers.forEach(clearTimeout);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -243,8 +272,8 @@ export const Header: React.FC<{
             const r = el.getBoundingClientRect();
             return r.height > 0 && r.top <= probe && r.bottom >= probe;
         });
-        setTone(t => (t === (dark ? 'dark' : 'light') ? t : dark ? 'dark' : 'light'));
-        setScrolled(s => (s === y > 24 ? s : y > 24));
+        setTone(dark ? 'dark' : 'light');
+        setScrolled(y > 24);
     }, [route]);
 
     const close = () => setMenuOpen(false);

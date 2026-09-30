@@ -72,7 +72,7 @@ Notes:
 ## Build
 
 ```bash
-npm run build    # -> dist/  (~2.4 MB: one JS + one CSS asset, one HTML per route)
+npm run build    # -> dist/  (~360 kB: one JS + one CSS asset, one HTML per route)
 npm run preview  # serve the built site at http://localhost:4173
 ```
 

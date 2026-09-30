@@ -12,7 +12,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PAGES, hrefFor } from './routes';
+import { PAGES } from './routes';
 import {
     Arrow, Cta, Eyebrow, Footer, Header, MobileBar, PageHero, Pager, RouteLink,
     applyHeadMeta, clamp01, navigate, reducedMotion, useOnScroll, useReveal, useRoute,
@@ -114,8 +114,11 @@ const Hero: React.FC = () => {
         progress.current = clamp01(y / (r.height || vh));
         if (!text.current || reducedMotion()) return;
         const p = clamp01(y / (vh * 0.85));
+        const opacity = Math.max(0, 1 - p * 1.1);
         text.current.style.transform = `translateY(${p * 70}px) scale(${1 - p * 0.04})`;
-        text.current.style.opacity = String(1 - p * 1.1);
+        text.current.style.opacity = String(opacity);
+        // Once faded out the links inside must stop taking focus and clicks.
+        text.current.style.visibility = opacity === 0 ? 'hidden' : '';
     });
 
     return (
@@ -441,10 +444,6 @@ const HomePage: React.FC = () => (
  * ------------------------------------------------------------------ */
 
 const ServiceRow: React.FC<{ service: Service; index: number; open: boolean; onToggle: () => void; onDiscuss: () => void }> = ({ service, index, open, onToggle, onDiscuss }) => {
-    const body = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        if (body.current) body.current.style.maxHeight = open ? `${body.current.scrollHeight}px` : '0px';
-    }, [open]);
     const id = `svc-${index}`;
     return (
         <article data-reveal={index * 40} className="border-t border-line last:border-b">
@@ -465,14 +464,16 @@ const ServiceRow: React.FC<{ service: Service; index: number; open: boolean; onT
                     <span aria-hidden="true" className={`w-9 h-9 rounded-[10px] border border-line-2 grid place-items-center text-[18px] text-ink transition-transform duration-300 ${open ? 'rotate-45 border-ink' : ''}`}>+</span>
                 </span>
             </button>
-            <div id={id} ref={body} className="faq-answer" aria-hidden={!open} inert={!open || undefined}>
-                <div className="pb-8 grid gap-6 min-[901px]:grid-cols-[56px_minmax(0,1fr)]">
-                    <span aria-hidden="true" />
-                    <div className="max-w-[720px]">
-                        <p className="m-0 text-[17px] leading-[1.6] text-ink-2 [text-wrap:pretty]">{service.explanation}</p>
-                        <button type="button" onClick={onDiscuss} className="btn btn-ink h-11 px-5 mt-6 text-[14px]">
-                            Discuss this service <Arrow />
-                        </button>
+            <div id={id} className="fold" data-open={open} aria-hidden={!open} inert={!open || undefined}>
+                <div>
+                    <div className="pb-8 grid gap-6 min-[901px]:grid-cols-[56px_minmax(0,1fr)]">
+                        <span aria-hidden="true" />
+                        <div className="max-w-[720px]">
+                            <p className="m-0 text-[17px] leading-[1.6] text-ink-2 [text-wrap:pretty]">{service.explanation}</p>
+                            <button type="button" onClick={onDiscuss} className="btn btn-ink h-11 px-5 mt-6 text-[14px]">
+                                Discuss this service <Arrow />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -630,10 +631,6 @@ const ProcessPage: React.FC = () => {
  * ------------------------------------------------------------------ */
 
 const FaqItem: React.FC<{ faq: { question: string; answer: string }; index: number; open: boolean; onToggle: () => void }> = ({ faq, index, open, onToggle }) => {
-    const body = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        if (body.current) body.current.style.maxHeight = open ? `${body.current.scrollHeight}px` : '0px';
-    }, [open]);
     const id = `faq-${index}`;
     return (
         <div data-reveal={index * 30} className="border-t border-line last:border-b">
@@ -644,8 +641,10 @@ const FaqItem: React.FC<{ faq: { question: string; answer: string }; index: numb
                 </span>
                 <span aria-hidden="true" className={`w-9 h-9 flex-none rounded-[10px] border border-line-2 grid place-items-center text-[18px] text-ink transition-transform duration-300 ${open ? 'rotate-45 border-ink' : ''}`}>+</span>
             </button>
-            <div id={id} ref={body} className="faq-answer" aria-hidden={!open} inert={!open || undefined}>
-                <p className="m-0 pb-6 pl-[calc(2ch+16px)] text-[16px] leading-relaxed text-ink-2 max-w-[760px] [text-wrap:pretty]">{faq.answer}</p>
+            <div id={id} className="fold" data-open={open} aria-hidden={!open} inert={!open || undefined}>
+                <div>
+                    <p className="m-0 pb-6 pl-[calc(2ch+16px)] text-[16px] leading-relaxed text-ink-2 max-w-[760px] [text-wrap:pretty]">{faq.answer}</p>
+                </div>
             </div>
         </div>
     );
