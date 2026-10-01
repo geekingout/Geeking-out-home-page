@@ -77,7 +77,7 @@ export const PAGES: PageDef[] = [
         path: '/team',
         nav: 'Team',
         doc: 'Team | Geeking Out Agency',
-        desc: "Friendly faces, expert minds. We're easy to work with. Meet the in-house engineers, product and accounts team behind Geeking Out.",
+        desc: "Friendly faces, expert minds. We're easy to work with. Meet the in-house engineers, product, marketing and accounts team behind Geeking Out.",
     },
     {
         key: 'process',

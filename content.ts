@@ -136,6 +136,7 @@ export const TEAM: TeamMember[] = [
     { name: 'Alex', role: 'Mobile App Engineer', color: '#B8672A', ink: '#FAF8F5' },
     { name: 'Patri', role: 'AI/Data Engineer', color: '#FF8A5C', ink: '#17151A' },
     { name: 'Olivia', role: 'Accounts Manager', color: '#17151A', ink: '#FAF8F5' },
+    { name: 'Sofia', role: 'Marketing Manager', color: '#FFB899', ink: '#17151A' },
 ];
 
 export type Quote = { name: string; org: string; text: string };
