@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://geekingout.net/">
     <meta property="og:title" content="Geeking Out Agency | AI-Powered. Human-Engineered.">
     <meta property="og:description" content="We build scalable, agentic, and beautiful software that powers businesses. An engineering team shipping production software since 2007.">
-    <meta property="og:image" content="https://geekingout.net/og-image.png"> <!-- Ensure you upload an image to this path -->
+    <meta property="og:image" content="https://geekingout.net/og-image.png">
 
     <!-- Twitter (X) -->
     <meta property="twitter:card" content="summary_large_image">
@@ -83,43 +83,12 @@
     }
     </script>
 
-    <!-- 2. Load Google Fonts -->
+    <!-- Fonts: Barlow for reading, Barlow Condensed for display, IBM Plex Mono for labels -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- 3. Load FontAwesome for Icons -->
-    <!-- integrity pins these CDN files to the exact bytes we reviewed: if the CDN ever serves
-         something else, the browser refuses to run it rather than executing it on our page.
-         crossorigin="anonymous" is required for integrity to be enforced cross-origin.
-         Regenerate a hash after any version bump:
-           curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g"
-          crossorigin="anonymous" referrerpolicy="no-referrer">
-
-    <!-- 4. Load GSAP & ScrollTrigger Animation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-            integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
-            integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    
-    <!-- Dark Mode Initializer to prevent flash -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body class="text-brand-black dark:text-gray-100 transition-colors duration-300">
-    <div class="atmosphere" aria-hidden="true"></div>
-    <div class="horizon" aria-hidden="true"></div>
+<body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

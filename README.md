@@ -3,6 +3,34 @@
 Marketing site for Geeking Out, LLC. React + TypeScript, built with Vite, styled with
 Tailwind. Twelve pages on real paths, pre-rendered to static HTML.
 
+## Where things live
+
+| file | holds |
+|---|---|
+| [App.tsx](App.tsx) | the pages: home sections, every inner page, the contact form, the app shell |
+| [nav.tsx](nav.tsx) | routing, `RouteLink`, header, footer, closing CTA, chapter pager, phone bar, scroll/reveal hooks |
+| [showcase.tsx](showcase.tsx) | the pinned product showcase and its seven live vignettes |
+| [hero-sky.ts](hero-sky.ts) | the home hero's WebGL skyline (two raw shaders, no three.js) |
+| [content.ts](content.ts) | every word on the site — services, products, team, quotes, FAQ, legal |
+| [arcade-cabinets.tsx](arcade-cabinets.tsx) | the four canvas games |
+| [routes.ts](routes.ts) | the route table, shared by the app and the build |
+| [styles.css](styles.css) | design tokens, type, buttons, header tones, arcade chrome |
+
+## Design
+
+The look is the September 2026 mockup, applied to every page: warm paper (`#FAF8F5`) with
+near-black bands (`#0D0908`), one vivid orange (`#FF5A1F`, plus a lit and an ink step for
+text on dark and on light), Barlow for reading, Barlow Condensed in caps for display, IBM
+Plex Mono for labels. Tokens are named in [tailwind.config.js](tailwind.config.js) so the
+markup says `text-ink-3` or `bg-night`, never a hex.
+
+Every page opens on a dark band. The sticky header watches for `[data-dark]` sections
+passing under it and flips between its dark and light tones by attribute; the CSS for both
+lives in `styles.css` under `.site-header`.
+
+There is no dark-mode toggle: the dark and light bands are part of the design rather than
+a preference.
+
 ## Run locally
 
 **Prerequisites:** Node.js 20+
@@ -44,13 +72,13 @@ Notes:
 ## Build
 
 ```bash
-npm run build    # -> dist/  (~2.4 MB: one JS + one CSS asset, one HTML per route)
+npm run build    # -> dist/  (~360 kB: one JS + one CSS asset, one HTML per route)
 npm run preview  # serve the built site at http://localhost:4173
 ```
 
 Three stages, in order:
 
-1. `vite build` — the client bundle. A plugin in [vite.config.ts](vite.config.ts) then writes
+1. `vite build` — the client bundle (~314 kB, one JS and one CSS asset). A plugin in [vite.config.ts](vite.config.ts) then writes
    an `index.html` into every route directory with that route's `<title>`, description and
    canonical patched into the `<head>`, plus `404.html`, `sitemap.xml`, `robots.txt` and an
    Apache `.htaccess`.
@@ -80,9 +108,15 @@ replacing it.
   system sits *between* `@tailwind components` and `@tailwind utilities`. Utilities must come
   last — the app assumes a utility beats a component class. Reverse it and `.panel`'s
   `position: relative` starts beating `.absolute`.
-- **Tailwind's scanner cannot see classes assembled at runtime.** The product showcase turns
-  `text-brand-*` into `bg-brand-*`, so those live in `safelist` in
-  [tailwind.config.js](tailwind.config.js).
+- **`overflow-x: hidden` goes on `<html>` only.** Putting it on `<body>` too makes the body
+  its own scroll container, and every `position: sticky` on the page — the header, the
+  pinned product visual — silently stops sticking. The app root clips the x axis instead.
+- **The WebGL context is never forced lost on unmount.** React's development double-mount
+  reuses the same canvas, and a context that was made lost cannot compile a shader; the
+  hero would fall back to CSS every time under `vite dev`. The canvas is discarded with
+  the page on navigation, which is disposal enough.
+- **Tailwind's scanner only reads the files listed in `content`.** Add any new source
+  module there or its classes will be missing from the build.
 
 ## Routing
 
@@ -120,16 +154,17 @@ Two things worth knowing:
 - For the same reason `Content-Type` must be a CORS-safelisted value, so the body goes out as
   `text/plain`. Apps Script reads it via `e.postData.contents` regardless.
 
-The form is reachable from the hero input (which prefills the project field), the header
-"Get In Touch" button, the closing CTA on every page, the mobile nav rocket, and each service
-modal's "Discuss This Service" — the last two prefill it through React state rather than the
-URL, so nobody's project description lands in a history entry.
+The form is reachable from the hero buttons, the header "Get In Touch" button, the closing
+CTA on every page, the phone's bottom bar, and each service row's "Discuss this service" —
+the last prefills it through React state rather than the URL, so nobody's project
+description lands in a history entry.
 
 ## Runtime dependencies
 
-Bundled: React, Three.js. Fetched at runtime: Google Fonts, FontAwesome and GSAP, the last
-two SRI-pinned in [index.html](index.html). GSAP drives the scroll choreography and is
-guarded — if it fails to load the page is simply static, never blank.
+Bundled: React. Fetched at runtime: Google Fonts only. There is no icon font and no
+animation library — reveals are an IntersectionObserver, the scroll choreography is a
+handful of `getBoundingClientRect` reads coalesced to one per frame, and the hero is two
+hand-written shaders.
 
-All entrance animation is skipped under `prefers-reduced-motion`, and both canvas loops idle
-when off-screen or backgrounded.
+All entrance animation is skipped under `prefers-reduced-motion`, the product vignettes hold
+still, and the hero's render loop idles when off-screen or backgrounded.
