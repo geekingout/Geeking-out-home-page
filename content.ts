@@ -126,7 +126,16 @@ export const PRODUCTS: Product[] = [
     },
 ];
 
-export type TeamMember = { name: string; role: string; color: string; portrait: PortraitLook; linkedin?: string };
+export type TeamMember = {
+    name: string;
+    role: string;
+    /** The studio backdrop behind the portrait. */
+    color: string;
+    portrait: PortraitLook;
+    /** A real headshot, e.g. '/team/victor.jpg' from public/. Replaces the illustration. */
+    photo?: string;
+    linkedin?: string;
+};
 
 // Accents are the product palette above, so the team reads as part of the same system.
 // `portrait` picks the illustration in team-portraits.tsx; it is tied to the person, not

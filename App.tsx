@@ -558,16 +558,18 @@ const TeamPage: React.FC = () => (
             <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-3">
                 {TEAM.map((m, i) => (
                     <article key={m.name} data-reveal={i * 50} className="rounded-[20px] border border-line bg-white p-2.5 flex flex-col">
-                        {/* The frame borrows the product panels' language: night ground, the
-                            person's accent as the light, a ghost numeral in the corner. */}
-                        <div
-                            className="relative aspect-[4/3] rounded-[14px] overflow-hidden bg-night-2"
-                            style={{ background: `radial-gradient(ellipse 85% 75% at 20% 8%, ${m.color}80, #17151A 72%)` }}
-                        >
-                            <div aria-hidden="true" className="absolute inset-0 scanlines" />
-                            <span aria-hidden="true" className="absolute -right-1 -bottom-5 font-display font-bold text-[clamp(90px,11vw,150px)] leading-none outline-ghost select-none">{pad(i + 1)}</span>
-                            <span className="absolute top-3 right-3.5 font-mono text-[12px] text-bone">{pad(i + 1)}</span>
-                            <Portrait look={m.portrait} color={m.color} className="absolute inset-0 w-full h-full" />
+                        {/* A studio headshot: a seamless backdrop in the person's own colour, lit
+                            from the upper left and falling off toward the floor. */}
+                        <div className="relative aspect-square rounded-[14px] overflow-hidden" style={{ backgroundColor: m.color }}>
+                            <div
+                                aria-hidden="true"
+                                className="absolute inset-0"
+                                style={{ background: 'radial-gradient(ellipse 85% 75% at 26% 14%, rgba(255,255,255,.42), rgba(255,255,255,0) 62%), linear-gradient(180deg, rgba(13,9,8,0) 52%, rgba(13,9,8,.38) 100%)' }}
+                            />
+                            {m.photo
+                                ? <img src={m.photo} alt={`${m.name}, ${m.role}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                                : <Portrait look={m.portrait} className="absolute inset-0 w-full h-full" />}
+                            <span className="absolute top-3 right-3 px-2 py-1 rounded-md bg-[rgba(13,9,8,.55)] backdrop-blur-sm font-mono text-[11px] text-paper">{pad(i + 1)}</span>
                         </div>
                         <div className="px-3 pt-4 pb-3">
                             <h2 className="display m-0 text-[28px]">{m.name}</h2>
