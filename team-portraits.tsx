@@ -2,17 +2,20 @@
  * Team portraits.
  *
  * Head-and-shoulders illustrations drawn as inline SVG and framed like studio
- * headshots: each person sits against a seamless backdrop in their own accent
- * colour. A portrait is assembled from parts — skin, hair style and colour,
- * what they are wearing, glasses or headphones — so every card is distinct and
- * any one trait can be changed in the LOOKS table below without redrawing.
+ * headshots. They are shown in warm monochrome on a neutral backdrop — the
+ * black-and-white team photo an agency would hang — so the page stays in the
+ * site's paper-and-ink register; a person's own colour appears only as a small
+ * mark on the card. The tones are drawn in colour and desaturated by a CSS
+ * filter in the frame, which is what keeps nine different people looking like
+ * one roll of film.
+ *
+ * A portrait is assembled from parts — skin, hair style and colour, what they
+ * are wearing, glasses or headphones — so every card is distinct and any one
+ * trait can be changed in the LOOKS table below without redrawing.
  *
  * These are illustrations, not likenesses. Until real headshots exist the
  * traits are assigned, not observed; a `photo` on the team member replaces the
- * drawing in the same frame.
- *
- * Inline SVG rather than image files: nothing to fetch, and the markup is in
- * the pre-rendered HTML.
+ * drawing in the same frame and gets the same treatment.
  */
 
 import React from 'react';
@@ -82,7 +85,7 @@ const backHair = (look: PortraitLook, base: string) => {
 
 /** Hair and hats that sit over the forehead, each with one stroke of highlight. */
 const frontHair = (look: PortraitLook, base: string, light: string) => {
-    const shine = (d: string) => <path d={d} fill="none" stroke={light} strokeWidth="2" strokeLinecap="round" opacity=".7" />;
+    const shine = (d: string) => <path d={d} fill="none" stroke={light} strokeWidth="2" strokeLinecap="round" opacity=".4" />;
     switch (look) {
         case 'crop':
             return <>
@@ -202,22 +205,20 @@ export const Portrait: React.FC<{ look: PortraitLook; className?: string }> = ({
             <ellipse cx="42.8" cy="53" rx="3.1" ry="5" fill={skin} /><ellipse cx="77.2" cy="53" rx="3.1" ry="5" fill={skinShade} />
             <path d="M43 48C43 34 50 29 60 29 70 29 77 34 77 48V54C77 64.5 69 72 60 72 51 72 43 64.5 43 54Z" fill={skin} />
             <path d="M60 29C70 29 77 34 77 48V54C77 64.5 69 72 60 72 66.5 66.5 70 58.5 70 50 70 40 66.5 33 60 29Z" fill={skinShade} opacity=".42" />
-            <ellipse cx="49.8" cy="58.4" rx="3.2" ry="2" fill={lip} opacity=".11" /><ellipse cx="70.2" cy="58.4" rx="3.2" ry="2" fill={lip} opacity=".11" />
 
             {spec.beard && <path d="M43.6 55C44 66.5 51.5 74 60 74 68.5 74 76 66.5 76.4 55 74.5 61 71 64.5 66.5 64.5 63.5 62.6 56.5 62.6 53.5 64.5 49 64.5 45.5 61 43.6 55Z" fill={hair} opacity=".92" />}
 
             {/* brows, eyes, nose, mouth */}
             <g fill="none" strokeLinecap="round">
-                <path d="M49.4 46.4Q53 44.2 56.6 45.7M63.4 45.7Q67 44.2 70.6 46.4" stroke={brow} strokeWidth="1.7" />
-                <path d="M60.6 53.2C59.6 56.4 58.6 58.4 60 59.4 61 60 62.4 59.8 63 59.2" stroke={skinShade} strokeWidth="1.3" />
-                <path d="M54.6 63.4C57.4 66.6 62.6 66.6 65.4 63.4" stroke={spec.beard ? PAPER : lip} strokeWidth="1.7" />
+                <path d="M49.8 46.6Q53 45 56.2 46M63.8 46Q67 45 70.2 46.6" stroke={brow} strokeWidth="1.3" />
+                <path d="M60.5 54C59.8 56.6 59.2 58.2 60.2 59 61 59.5 62 59.3 62.5 58.9" stroke={skinShade} strokeWidth="1.2" />
+                <path d="M55.8 63.8C58.2 65.4 61.8 65.4 64.2 63.8" stroke={spec.beard ? PAPER : lip} strokeWidth="1.4" />
             </g>
-            <ellipse cx="53" cy="51.2" rx="1.75" ry="2.15" fill="#1D1715" /><ellipse cx="67" cy="51.2" rx="1.75" ry="2.15" fill="#1D1715" />
-            <circle cx="53.6" cy="50.4" r=".6" fill="#fff" /><circle cx="67.6" cy="50.4" r=".6" fill="#fff" />
+            <ellipse cx="53" cy="51.2" rx="1.35" ry="1.6" fill="#1D1715" /><ellipse cx="67" cy="51.2" rx="1.35" ry="1.6" fill="#1D1715" />
 
             {frontHair(look, hair, hairLight)}
 
-            {spec.earrings && !hatted && <><circle cx="42.6" cy="59.6" r="1.7" fill="#F5C04A" /><circle cx="77.4" cy="59.6" r="1.7" fill="#F5C04A" /></>}
+            {spec.earrings && !hatted && <><circle cx="42.6" cy="59.4" r="1.1" fill={PAPER} /><circle cx="77.4" cy="59.4" r="1.1" fill={PAPER} /></>}
 
             {spec.glasses === 'square' && (
                 <g stroke={INK} strokeWidth="1.6" fill="rgba(255,255,255,.14)">
