@@ -144,10 +144,10 @@ export const TEAM: TeamMember[] = [
     { name: 'Victor', role: 'Founder / AI Engineer', color: '#FF5A1F', portrait: 'crop', linkedin: 'http://www.linkedin.com/in/geekingout' },
     { name: 'Omar', role: 'AI Engineer', color: '#0E8C8C', portrait: 'curls' },
     { name: 'Nahuel', role: 'Software Developer', color: '#E0437A', portrait: 'beanie' },
-    { name: 'Miguel', role: 'Systems Engineer', color: '#2EB884', portrait: 'cap' },
+    { name: 'Daniel', role: 'Systems Engineer', color: '#2EB884', portrait: 'cap' },
     { name: 'Lucia', role: 'Product Manager', color: '#2F6FE8', portrait: 'bob' },
     { name: 'Alex', role: 'Mobile App Engineer', color: '#B8672A', portrait: 'round' },
-    { name: 'Patri', role: 'AI/Data Engineer', color: '#FF8A5C', portrait: 'bun' },
+    { name: 'Nina', role: 'AI/Data Engineer', color: '#FF8A5C', portrait: 'bun' },
     { name: 'Olivia', role: 'Accounts Manager', color: '#F5A623', portrait: 'long' },
     { name: 'Sofia', role: 'Marketing Manager', color: '#7FB3FF', portrait: 'waves' },
 ];
