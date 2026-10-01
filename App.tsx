@@ -24,6 +24,7 @@ import {
 import { ProductShowcase } from './showcase';
 import { mountSky, SKY_POINTS, type Sky } from './hero-sky';
 import { ArcadeCabinets } from './arcade-cabinets';
+import { Portrait } from './team-portraits';
 
 // --- Contact form endpoint ---
 const GOOGLE_SHEETS_WEBHOOK_URL: string = "https://script.google.com/macros/s/AKfycbwXWaVr52KdOf0bQHL21kG2vFyNZyOrsYYRv5_Bj1wIMxWx5bs7e9UuqIx7nE6G6qEkjw/exec";
@@ -556,14 +557,21 @@ const TeamPage: React.FC = () => (
         <section className="max-w-site mx-auto px-6 pt-16 pb-24">
             <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-3">
                 {TEAM.map((m, i) => (
-                    <article key={m.name} data-reveal={i * 50} className="rounded-2xl border border-line bg-white p-6 flex flex-col gap-6 min-h-[220px]">
-                        <div className="flex items-start justify-between gap-3">
-                            <span aria-hidden="true" className="w-16 h-16 rounded-2xl grid place-items-center font-display uppercase font-bold text-[26px]" style={{ background: m.color, color: m.ink }}>
-                                {m.name.slice(0, 2)}
-                            </span>
-                            <span className="font-mono text-[12px] text-ink-4">{pad(i + 1)}</span>
+                    <article key={m.name} data-reveal={i * 50} className="rounded-[20px] border border-line bg-white p-2.5 flex flex-col">
+                        {/* A studio headshot: a seamless backdrop in the person's own colour, lit
+                            from the upper left and falling off toward the floor. */}
+                        <div className="relative aspect-square rounded-[14px] overflow-hidden" style={{ backgroundColor: m.color }}>
+                            <div
+                                aria-hidden="true"
+                                className="absolute inset-0"
+                                style={{ background: 'radial-gradient(ellipse 85% 75% at 26% 14%, rgba(255,255,255,.42), rgba(255,255,255,0) 62%), linear-gradient(180deg, rgba(13,9,8,0) 52%, rgba(13,9,8,.38) 100%)' }}
+                            />
+                            {m.photo
+                                ? <img src={m.photo} alt={`${m.name}, ${m.role}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                                : <Portrait look={m.portrait} className="absolute inset-0 w-full h-full" />}
+                            <span className="absolute top-3 right-3 px-2 py-1 rounded-md bg-[rgba(13,9,8,.55)] backdrop-blur-sm font-mono text-[11px] text-paper">{pad(i + 1)}</span>
                         </div>
-                        <div className="mt-auto">
+                        <div className="px-3 pt-4 pb-3">
                             <h2 className="display m-0 text-[28px]">{m.name}</h2>
                             <p className="m-0 mt-1 font-mono text-[12px] text-orange-ink">{m.role}</p>
                             {m.linkedin && (

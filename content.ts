@@ -6,6 +6,8 @@
  * components that lay it out.
  */
 
+import type { PortraitLook } from './team-portraits';
+
 export const FOUNDED = 2007;
 export const PHONE_DISPLAY = '646-883-4335 (GEEK)';
 export const PHONE_TEL = 'tel:+16468834335';
@@ -124,19 +126,30 @@ export const PRODUCTS: Product[] = [
     },
 ];
 
-export type TeamMember = { name: string; role: string; color: string; ink: string; linkedin?: string };
+export type TeamMember = {
+    name: string;
+    role: string;
+    /** The studio backdrop behind the portrait. */
+    color: string;
+    portrait: PortraitLook;
+    /** A real headshot, e.g. '/team/victor.jpg' from public/. Replaces the illustration. */
+    photo?: string;
+    linkedin?: string;
+};
 
 // Accents are the product palette above, so the team reads as part of the same system.
+// `portrait` picks the illustration in team-portraits.tsx; it is tied to the person, not
+// to their position in this list, so reordering the team never reshuffles the faces.
 export const TEAM: TeamMember[] = [
-    { name: 'Victor', role: 'Founder / AI Engineer', color: '#FF5A1F', ink: '#17151A', linkedin: 'http://www.linkedin.com/in/geekingout' },
-    { name: 'Omar', role: 'AI Engineer', color: '#0E8C8C', ink: '#FAF8F5' },
-    { name: 'Nahuel', role: 'Software Developer', color: '#E0437A', ink: '#FAF8F5' },
-    { name: 'Miguel', role: 'Systems Engineer', color: '#2EB884', ink: '#17151A' },
-    { name: 'Lucia', role: 'Product Manager', color: '#2F6FE8', ink: '#FAF8F5' },
-    { name: 'Alex', role: 'Mobile App Engineer', color: '#B8672A', ink: '#FAF8F5' },
-    { name: 'Patri', role: 'AI/Data Engineer', color: '#FF8A5C', ink: '#17151A' },
-    { name: 'Olivia', role: 'Accounts Manager', color: '#17151A', ink: '#FAF8F5' },
-    { name: 'Sofia', role: 'Marketing Manager', color: '#FFB899', ink: '#17151A' },
+    { name: 'Victor', role: 'Founder / AI Engineer', color: '#FF5A1F', portrait: 'crop', linkedin: 'http://www.linkedin.com/in/geekingout' },
+    { name: 'Omar', role: 'AI Engineer', color: '#0E8C8C', portrait: 'curls' },
+    { name: 'Nahuel', role: 'Software Developer', color: '#E0437A', portrait: 'beanie' },
+    { name: 'Daniel', role: 'Systems Engineer', color: '#2EB884', portrait: 'cap' },
+    { name: 'Lucia', role: 'Product Manager', color: '#2F6FE8', portrait: 'bob' },
+    { name: 'Alex', role: 'Mobile App Engineer', color: '#B8672A', portrait: 'round' },
+    { name: 'Nina', role: 'AI/Data Engineer', color: '#FF8A5C', portrait: 'bun' },
+    { name: 'Olivia', role: 'Accounts Manager', color: '#F5A623', portrait: 'long' },
+    { name: 'Sofia', role: 'Marketing Manager', color: '#7FB3FF', portrait: 'waves' },
 ];
 
 export type Quote = { name: string; org: string; text: string };
