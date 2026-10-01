@@ -129,7 +129,7 @@ export const PRODUCTS: Product[] = [
 export type TeamMember = {
     name: string;
     role: string;
-    /** The person's accent: a small mark on the card and a faint wash on hover. */
+    /** The studio backdrop behind the portrait. */
     color: string;
     portrait: PortraitLook;
     /** A real headshot, e.g. '/team/victor.jpg' from public/. Replaces the illustration. */

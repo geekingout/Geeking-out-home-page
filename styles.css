@@ -239,12 +239,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .fold[data-open="true"] { grid-template-rows: 1fr; }
 .fold > * { min-height: 0; overflow: hidden; } /* padding belongs one level further in */
 
-/* ---------- Team portraits ----------
-   One muted, warm grade for every headshot, drawn or photographed: most of the colour
-   taken out, enough left that skin still reads as skin. Full black-and-white made the
-   faces go grey. */
-.portrait-tone { filter: saturate(.38) sepia(.14) contrast(.95) brightness(1.03); }
-
 /* ---------- Legal prose ---------- */
 .legal { white-space: pre-wrap; line-height: 1.7; }
 

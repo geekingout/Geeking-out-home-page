@@ -557,22 +557,19 @@ const TeamPage: React.FC = () => (
         <section className="max-w-site mx-auto px-6 pt-16 pb-24">
             <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-3">
                 {TEAM.map((m, i) => (
-                    <article key={m.name} data-reveal={i * 50} className="group rounded-[20px] border border-line bg-white p-2.5 flex flex-col">
-                        {/* A studio headshot in warm monochrome: neutral seamless backdrop, light
-                            from the upper left. The person's colour is a mark, not a flood. */}
-                        <div className="relative aspect-square rounded-[14px] overflow-hidden bg-[#D9D3CB]">
+                    <article key={m.name} data-reveal={i * 50} className="rounded-[20px] border border-line bg-white p-2.5 flex flex-col">
+                        {/* A studio headshot: a seamless backdrop in the person's own colour, lit
+                            from the upper left and falling off toward the floor. */}
+                        <div className="relative aspect-square rounded-[14px] overflow-hidden" style={{ backgroundColor: m.color }}>
                             <div
                                 aria-hidden="true"
                                 className="absolute inset-0"
-                                style={{ background: 'radial-gradient(ellipse 85% 75% at 26% 14%, rgba(255,255,255,.7), rgba(255,255,255,0) 64%), linear-gradient(180deg, rgba(23,21,26,0) 55%, rgba(23,21,26,.16) 100%)' }}
+                                style={{ background: 'radial-gradient(ellipse 85% 75% at 26% 14%, rgba(255,255,255,.42), rgba(255,255,255,0) 62%), linear-gradient(180deg, rgba(13,9,8,0) 52%, rgba(13,9,8,.38) 100%)' }}
                             />
                             {m.photo
-                                ? <img src={m.photo} alt={`${m.name}, ${m.role}`} loading="lazy" className="portrait-tone absolute inset-0 w-full h-full object-cover" />
-                                : <Portrait look={m.portrait} className="portrait-tone absolute inset-0 w-full h-full" />}
-                            <div aria-hidden="true" className="absolute inset-0 opacity-0 group-hover:opacity-[.16] transition-opacity duration-500 mix-blend-multiply" style={{ backgroundColor: m.color }} />
-                            <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[rgba(250,248,245,.78)] backdrop-blur-sm font-mono text-[11px] text-ink-2">
-                                <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: m.color }} />{pad(i + 1)}
-                            </span>
+                                ? <img src={m.photo} alt={`${m.name}, ${m.role}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                                : <Portrait look={m.portrait} className="absolute inset-0 w-full h-full" />}
+                            <span className="absolute top-3 right-3 px-2 py-1 rounded-md bg-[rgba(13,9,8,.55)] backdrop-blur-sm font-mono text-[11px] text-paper">{pad(i + 1)}</span>
                         </div>
                         <div className="px-3 pt-4 pb-3">
                             <h2 className="display m-0 text-[28px]">{m.name}</h2>
