@@ -554,7 +554,7 @@ const TeamPage: React.FC = () => (
     <>
         <PageHero eyebrow={`Who you work with · ${TEAM.length} people`} title="Our Team" blurb="Friendly faces, expert minds. We're easy to work with." />
         <section className="max-w-site mx-auto px-6 pt-16 pb-24">
-            <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-4">
+            <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-3">
                 {TEAM.map((m, i) => (
                     <article key={m.name} data-reveal={i * 50} className="rounded-2xl border border-line bg-white p-6 flex flex-col gap-6 min-h-[220px]">
                         <div className="flex items-start justify-between gap-3">

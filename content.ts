@@ -129,13 +129,14 @@ export type TeamMember = { name: string; role: string; color: string; ink: strin
 // Accents are the product palette above, so the team reads as part of the same system.
 export const TEAM: TeamMember[] = [
     { name: 'Victor', role: 'Founder / AI Engineer', color: '#FF5A1F', ink: '#17151A', linkedin: 'http://www.linkedin.com/in/geekingout' },
-    { name: 'Usama', role: 'AI Engineer', color: '#0E8C8C', ink: '#FAF8F5' },
+    { name: 'Omar', role: 'AI Engineer', color: '#0E8C8C', ink: '#FAF8F5' },
     { name: 'Nahuel', role: 'Software Developer', color: '#E0437A', ink: '#FAF8F5' },
     { name: 'Miguel', role: 'Systems Engineer', color: '#2EB884', ink: '#17151A' },
     { name: 'Lucia', role: 'Product Manager', color: '#2F6FE8', ink: '#FAF8F5' },
-    { name: 'AQ', role: 'Mobile App Engineer', color: '#B8672A', ink: '#FAF8F5' },
+    { name: 'Alex', role: 'Mobile App Engineer', color: '#B8672A', ink: '#FAF8F5' },
     { name: 'Patri', role: 'AI/Data Engineer', color: '#FF8A5C', ink: '#17151A' },
     { name: 'Olivia', role: 'Accounts Manager', color: '#17151A', ink: '#FAF8F5' },
+    { name: 'Sofia', role: 'Marketing Manager', color: '#FFB899', ink: '#17151A' },
 ];
 
 export type Quote = { name: string; org: string; text: string };
