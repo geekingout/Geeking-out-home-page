@@ -24,6 +24,7 @@ import {
 import { ProductShowcase } from './showcase';
 import { mountSky, SKY_POINTS, type Sky } from './hero-sky';
 import { ArcadeCabinets } from './arcade-cabinets';
+import { Portrait } from './team-portraits';
 
 // --- Contact form endpoint ---
 const GOOGLE_SHEETS_WEBHOOK_URL: string = "https://script.google.com/macros/s/AKfycbwXWaVr52KdOf0bQHL21kG2vFyNZyOrsYYRv5_Bj1wIMxWx5bs7e9UuqIx7nE6G6qEkjw/exec";
@@ -556,14 +557,19 @@ const TeamPage: React.FC = () => (
         <section className="max-w-site mx-auto px-6 pt-16 pb-24">
             <div className="grid gap-4 grid-cols-2 min-[901px]:grid-cols-3">
                 {TEAM.map((m, i) => (
-                    <article key={m.name} data-reveal={i * 50} className="rounded-2xl border border-line bg-white p-6 flex flex-col gap-6 min-h-[220px]">
-                        <div className="flex items-start justify-between gap-3">
-                            <span aria-hidden="true" className="w-16 h-16 rounded-2xl grid place-items-center font-display uppercase font-bold text-[26px]" style={{ background: m.color, color: m.ink }}>
-                                {m.name.slice(0, 2)}
-                            </span>
-                            <span className="font-mono text-[12px] text-ink-4">{pad(i + 1)}</span>
+                    <article key={m.name} data-reveal={i * 50} className="rounded-[20px] border border-line bg-white p-2.5 flex flex-col">
+                        {/* The frame borrows the product panels' language: night ground, the
+                            person's accent as the light, a ghost numeral in the corner. */}
+                        <div
+                            className="relative aspect-[4/3] rounded-[14px] overflow-hidden bg-night-2"
+                            style={{ background: `radial-gradient(ellipse 85% 75% at 20% 8%, ${m.color}80, #17151A 72%)` }}
+                        >
+                            <div aria-hidden="true" className="absolute inset-0 scanlines" />
+                            <span aria-hidden="true" className="absolute -right-1 -bottom-5 font-display font-bold text-[clamp(90px,11vw,150px)] leading-none outline-ghost select-none">{pad(i + 1)}</span>
+                            <span className="absolute top-3 right-3.5 font-mono text-[12px] text-bone">{pad(i + 1)}</span>
+                            <Portrait look={m.portrait} color={m.color} className="absolute inset-0 w-full h-full" />
                         </div>
-                        <div className="mt-auto">
+                        <div className="px-3 pt-4 pb-3">
                             <h2 className="display m-0 text-[28px]">{m.name}</h2>
                             <p className="m-0 mt-1 font-mono text-[12px] text-orange-ink">{m.role}</p>
                             {m.linkedin && (
