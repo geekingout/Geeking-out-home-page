@@ -131,28 +131,43 @@ the hash router that briefly replaced them (`#/services`).
 ## Contact form → Google Sheets
 
 The `/contact/` page is the only data path in the site. On submit it POSTs JSON to a Google
-Apps Script web app, which appends a row to a spreadsheet.
+Apps Script web app, which validates the lead, appends a row to the "geeking out landing
+page" spreadsheet and answers with JSON. The success screen only shows once that answer
+says the row was written; anything else shows an error and a "Try again" button that
+resends the same lead.
 
-The endpoint lives in `GOOGLE_SHEETS_WEBHOOK_URL` at the top of [App.tsx](App.tsx). The
-payload:
+The script's source is [apps-script/Code.gs](apps-script/Code.gs), with deployment notes
+at the top of the file. The endpoint URL lives in `LEAD_ENDPOINT` at the top of
+[App.tsx](App.tsx). The payload:
 
 | field | example |
 |---|---|
-| `timestamp` | `7/22/2026, 3:05:43 PM` |
 | `source` | `Contact Form` |
 | `name` | `Casey Rivera` |
 | `email` | `casey@example.com` |
-| `description` | the project text |
-| `projectDescription` | same text, duplicated so either column name works |
 | `organization` | `Pawsome Grooming` |
+| `description` | the project text |
+| `submissionId` | a UUID minted when the form opens, reused on retries |
+| `elapsedMs` | milliseconds between opening the form and sending |
+| `website` | honeypot; always empty for a person |
 
-Two things worth knowing:
+The script answers `{ ok: true, id }` (or `duplicate: true` for a retry of a lead it already
+has), `{ ok: false, code: 'validation', fields }` for bad input, or `{ ok: false, code,
+error }` for anything else. The timestamp in the sheet is the server's, not the browser's.
 
-- The request is sent `mode: 'no-cors'`, which Google Apps Script web apps require. The
-  response is therefore opaque — the site can tell that the request left the browser, but
-  **not** that the script wrote the row. The success screen reflects the former.
-- For the same reason `Content-Type` must be a CORS-safelisted value, so the body goes out as
-  `text/plain`. Apps Script reads it via `e.postData.contents` regardless.
+Things worth knowing:
+
+- The body goes out as `text/plain` so the request stays "simple" and needs no CORS
+  preflight — Apps Script answers through a redirect that cannot handle one. The response
+  is readable because Apps Script sends `Access-Control-Allow-Origin: *`.
+- Submissions that trip the honeypot, arrive in under three seconds, look like the bot
+  traffic the sheet has historically received, or exceed the rate limits are written to a
+  "Needs review" sheet with the reason instead of being dropped. The client is still told
+  "ok" so bots learn nothing.
+- The same email and description sent twice inside ten minutes count as one lead.
+- Editing the script does nothing until the **existing** "Lead Collector" deployment is
+  updated to a new version. A *new* deployment has a new URL and the site keeps posting to
+  the old one.
 
 The form is reachable from the hero buttons, the header "Get In Touch" button, the closing
 CTA on every page, the phone's bottom bar, and each service row's "Discuss this service" —
