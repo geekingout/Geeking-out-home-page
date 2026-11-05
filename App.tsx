@@ -26,43 +26,67 @@ import { mountSky, SKY_POINTS, type Sky } from './hero-sky';
 import { ArcadeCabinets } from './arcade-cabinets';
 
 // --- Contact form endpoint ---
-const GOOGLE_SHEETS_WEBHOOK_URL: string = "https://script.google.com/macros/s/AKfycbwXWaVr52KdOf0bQHL21kG2vFyNZyOrsYYRv5_Bj1wIMxWx5bs7e9UuqIx7nE6G6qEkjw/exec";
+// The "Lead Collector" deployment of the Apps Script in apps-script/Code.gs. It appends a
+// row to the leads spreadsheet and answers with JSON, so the form only reports success
+// once the row is confirmed written.
+const LEAD_ENDPOINT: string = "https://script.google.com/macros/s/AKfycbwXWaVr52KdOf0bQHL21kG2vFyNZyOrsYYRv5_Bj1wIMxWx5bs7e9UuqIx7nE6G6qEkjw/exec";
+const LEAD_TIMEOUT_MS = 20000;
 
-// Resolves to true when the POST left the browser without a network error. The request is
-// sent no-cors so the response is opaque: this cannot confirm the Apps Script wrote the row,
-// only that the visitor was online and the endpoint reachable.
-const sendToGoogleSheets = async (data: Record<string, unknown>): Promise<boolean> => {
-    const str = (v: unknown) => (typeof v === 'string' ? v : '');
-    const cleanPayload: Record<string, string | number | boolean> = {
-        timestamp: new Date().toLocaleString(),
-        source: str(data.source) || 'Unknown',
-        name: str(data.name),
-        email: str(data.email),
-        // The field is named projectDescription; mirror it into `description` so the sheet
-        // gets the text whichever column name the Apps Script reads.
-        description: str(data.projectDescription) || str(data.description),
-    };
-    for (const [key, value] of Object.entries(data)) {
-        if (key in cleanPayload) continue;
-        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') cleanPayload[key] = value;
-    }
+type LeadPayload = {
+    source: string;
+    name: string;
+    email: string;
+    organization: string;
+    description: string;
+    submissionId: string;
+    elapsedMs: number;
+    website: string; // honeypot: humans never see it, so it must stay empty
+};
 
+type LeadResponse =
+    | { ok: true; id?: string; duplicate?: boolean }
+    | { ok: false; code?: string; error?: string; fields?: Partial<Record<string, string>> };
+
+// POSTs the lead and resolves with the server's verdict. Throws on network failure,
+// timeout, or a response that is not the script's JSON (for instance Google's error page
+// when the deployment is broken), so the caller can show a retry.
+//
+// The body goes out as text/plain on purpose: that keeps the request "simple", so the
+// browser sends it without a preflight, which Apps Script's redirect-to-result flow
+// cannot answer. The script parses the JSON from e.postData.contents either way.
+const submitLead = async (payload: LeadPayload): Promise<LeadResponse> => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), LEAD_TIMEOUT_MS);
     try {
-        // no-cors is required by Apps Script web apps and restricts Content-Type to the
-        // safelisted values, so the body goes out as text/plain; the script reads
-        // e.postData.contents regardless.
-        await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+        const res = await fetch(LEAD_ENDPOINT, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(cleanPayload),
+            body: JSON.stringify(payload),
+            signal: controller.signal,
         });
-        return true;
-    } catch (error) {
-        console.error('Error sending to Google Sheets:', error);
-        return false;
+        if (!res.ok) throw new Error(`Lead endpoint answered HTTP ${res.status}`);
+        const text = await res.text();
+        let parsed: unknown;
+        try {
+            parsed = JSON.parse(text);
+        } catch {
+            throw new Error('Lead endpoint did not answer with JSON');
+        }
+        if (!parsed || typeof parsed !== 'object' || typeof (parsed as { ok?: unknown }).ok !== 'boolean') {
+            throw new Error('Lead endpoint answered with an unexpected shape');
+        }
+        return parsed as LeadResponse;
+    } finally {
+        window.clearTimeout(timer);
     }
 };
+
+const newSubmissionId = (): string => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -687,25 +711,87 @@ const ArcadePage: React.FC = () => (
  *  Contact
  * ------------------------------------------------------------------ */
 
+type FormErrors = Partial<Record<'name' | 'email' | 'projectDescription', string>>;
+
+const GENERIC_SEND_ERROR = "We couldn't save your message just now. Your details are still here, so check your connection and try again";
+
 const ProjectForm: React.FC<{ initialDescription?: string }> = ({ initialDescription = '' }) => {
-    const [form, setForm] = useState({ name: '', email: '', organization: '', projectDescription: initialDescription });
+    const [form, setForm] = useState({ name: '', email: '', organization: '', projectDescription: initialDescription, website: '' });
     const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [sendError, setSendError] = useState('');
+    // One id per filled-in form, kept across retries so a second send of the same lead
+    // (say, after a lost response) is recognised by the server instead of stored twice.
+    const submissionId = useRef('');
+    const openedAt = useRef(0);
+
+    useEffect(() => {
+        submissionId.current = newSubmissionId();
+        openedAt.current = Date.now();
+    }, []);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
+        if (name in errors) setErrors(prev => ({ ...prev, [name]: undefined }));
     };
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (status === 'sending') return;
+
+        const name = form.name.trim();
+        const email = form.email.trim();
+        const description = form.projectDescription.trim();
+        const next: FormErrors = {};
+        if (!name) next.name = 'Please tell us your name.';
+        if (!email) next.email = 'Please enter your email address.';
+        else if (!EMAIL_RE.test(email)) next.email = 'That email address does not look right.';
+        if (!description) next.projectDescription = 'Please describe your project.';
+        if (Object.keys(next).length) {
+            setErrors(next);
+            setStatus('idle');
+            return;
+        }
+
         setStatus('sending');
-        const ok = await sendToGoogleSheets({ source: 'Contact Form', ...form });
-        setStatus(ok ? 'sent' : 'error');
+        setSendError('');
+        if (!submissionId.current) submissionId.current = newSubmissionId();
+        try {
+            const result = await submitLead({
+                source: 'Contact Form',
+                name,
+                email,
+                organization: form.organization.trim(),
+                description,
+                submissionId: submissionId.current,
+                elapsedMs: openedAt.current ? Date.now() - openedAt.current : -1,
+                website: form.website,
+            });
+            if (result.ok === true) {
+                setStatus('sent');
+                return;
+            }
+            if (result.code === 'validation' && result.fields) {
+                setErrors(result.fields as FormErrors);
+                setSendError(result.error || 'Please check the highlighted fields.');
+            } else {
+                setSendError(result.error || GENERIC_SEND_ERROR);
+            }
+            setStatus('error');
+        } catch (err) {
+            console.error('Lead submission failed:', err);
+            setSendError(GENERIC_SEND_ERROR);
+            setStatus('error');
+        }
     };
 
-    const field = 'w-full h-12 px-4 rounded-xl border border-line-2 bg-white text-ink text-[16px] focus:outline-none focus:border-ink focus:ring-2 focus:ring-orange/40 transition-colors';
+    const field = 'w-full h-12 px-4 rounded-xl border bg-white text-ink text-[16px] focus:outline-none focus:border-ink focus:ring-2 focus:ring-orange/40 transition-colors';
+    const fieldTone = (key: keyof FormErrors) => `${field} ${errors[key] ? 'border-orange-ink' : 'border-line-2'}`;
     const label = 'eyebrow block mb-2 text-ink-3';
+    const errorText = (key: keyof FormErrors) => errors[key]
+        ? <p id={`${key}-error`} role="alert" className="m-0 mt-2 text-[13px] font-medium text-orange-ink">{errors[key]}</p>
+        : null;
 
     if (status === 'sent') {
         return (
@@ -721,20 +807,22 @@ const ProjectForm: React.FC<{ initialDescription?: string }> = ({ initialDescrip
     }
 
     return (
-        <form onSubmit={onSubmit} className="grid gap-5">
+        <form onSubmit={onSubmit} noValidate className="grid gap-5">
             <div className="grid gap-5 min-[701px]:grid-cols-2">
                 <div>
                     <label htmlFor="name" className={label}>Name</label>
-                    <input type="text" id="name" name="name" value={form.name} onChange={onChange} required autoComplete="name" className={field} />
+                    <input type="text" id="name" name="name" value={form.name} onChange={onChange} required autoComplete="name" maxLength={120} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'name-error' : undefined} className={fieldTone('name')} />
+                    {errorText('name')}
                 </div>
                 <div>
                     <label htmlFor="email" className={label}>Email</label>
-                    <input type="email" id="email" name="email" value={form.email} onChange={onChange} required autoComplete="email" className={field} />
+                    <input type="email" id="email" name="email" value={form.email} onChange={onChange} required autoComplete="email" maxLength={254} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-error' : undefined} className={fieldTone('email')} />
+                    {errorText('email')}
                 </div>
             </div>
             <div>
                 <label htmlFor="organization" className={label}>Organization</label>
-                <input type="text" id="organization" name="organization" value={form.organization} onChange={onChange} autoComplete="organization" className={field} />
+                <input type="text" id="organization" name="organization" value={form.organization} onChange={onChange} autoComplete="organization" maxLength={200} className={`${field} border-line-2`} />
             </div>
             <div>
                 <label htmlFor="projectDescription" className={label}>Describe your project</label>
@@ -746,16 +834,25 @@ const ProjectForm: React.FC<{ initialDescription?: string }> = ({ initialDescrip
                     onChange={onChange}
                     required
                     rows={6}
-                    className={`${field} h-auto py-3 resize-y`}
+                    maxLength={5000}
+                    aria-invalid={!!errors.projectDescription}
+                    aria-describedby={errors.projectDescription ? 'projectDescription-error' : undefined}
+                    className={`${fieldTone('projectDescription')} h-auto py-3 resize-y`}
                 />
+                {errorText('projectDescription')}
+            </div>
+            {/* Honeypot. Off-screen and skipped by the tab order, so people never fill it; form-filling bots do. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
+                <label htmlFor="website">Website</label>
+                <input type="text" id="website" name="website" value={form.website} onChange={onChange} tabIndex={-1} autoComplete="off" />
             </div>
             {status === 'error' && (
                 <p role="alert" className="m-0 text-[14px] font-medium text-orange-ink">
-                    Something went wrong sending that. Check your connection and try again, or email us at <a href={`mailto:${EMAIL}`} className="underline">{EMAIL}</a>.
+                    {sendError || GENERIC_SEND_ERROR}, or email us at <a href={`mailto:${EMAIL}`} className="underline">{EMAIL}</a>.
                 </p>
             )}
             <button type="submit" disabled={status === 'sending'} className="btn btn-orange h-14 px-7 text-[16px] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0">
-                {status === 'sending' ? 'Sending…' : 'Launch project'} <Arrow />
+                {status === 'sending' ? 'Sending…' : status === 'error' ? 'Try again' : 'Launch project'} <Arrow />
             </button>
         </form>
     );
