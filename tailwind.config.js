@@ -9,7 +9,7 @@
 export default {
     content: [
         './index.html', './index.tsx', './App.tsx', './nav.tsx', './showcase.tsx',
-        './content.ts', './arcade-cabinets.tsx', './routes.ts', './entry-server.tsx',
+        './content.ts', './team-portraits.tsx', './arcade-cabinets.tsx', './routes.ts', './entry-server.tsx',
     ],
     theme: {
         extend: {
